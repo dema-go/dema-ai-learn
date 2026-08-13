@@ -45,6 +45,20 @@ class PrototypeContractTests(unittest.TestCase):
         self.assertNotIn("fetch(", js)
         self.assertNotIn("XMLHttpRequest", js)
 
+    def test_core_flow_inventory(self):
+        text = (PROTOTYPES / "codex-core-flow.html").read_text(encoding="utf-8")
+        for screen_id in ("first-home", "return-home", "input-picker", "text-input",
+                          "url-input", "generation", "generation-preview", "quiz-question",
+                          "quiz-correct", "quiz-wrong", "question-report", "quiz-result",
+                          "wrong-retest"):
+            self.assertIn(f'id="{screen_id}"', text)
+        for copy in ("敬请期待", "正在理解原文", "正在抓住重点", "正在生成第",
+                     "正在检查答案", "无依据", "答案错", "有歧义", "太简单",
+                     "AI 依据你的材料生成，可能有误", "马上翻盘"):
+            self.assertIn(copy, text)
+        self.assertIn("8000", text)
+        self.assertIn("公开网页", text)
+
 
 if __name__ == "__main__":
     unittest.main()
