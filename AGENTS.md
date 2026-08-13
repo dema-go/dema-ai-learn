@@ -108,7 +108,7 @@
 
 ### Codex 正式原型
 
-正式原型位于分支 `codex/html-prototypes`，对应 GitHub PR #1：
+正式原型已通过 GitHub PR #1 合入 `main`；原开发分支为 `codex/html-prototypes`：
 
 - `UI原型图.md`
 - `prototypes/codex-core-flow.html`
@@ -124,7 +124,7 @@
 
 `UI原型图.md` 是后续开发的统一页面索引。实现页面、设计接口或拆分任务时，必须使用其中的画板 ID 和业务状态，不要只凭截图猜测功能。
 
-在 PR #1 合并前，主目录的 `main` 工作树看不到这些正式文件。需要查看或启动时，应进入对应 worktree，或显式查看该分支，不能误判为文件丢失。
+主目录的 `main` 工作树现在可以直接查看和启动这些正式文件。历史功能分支与 worktree 仅用于追溯，不应作为后续开发基线。
 
 ## 6. Git 与 Worktree 开发规范
 
@@ -317,11 +317,11 @@ python3 -m unittest tests/test_prototypes.py -v
 
 - GitHub：`dema-go/dema-ai-learn`，私有仓库。
 - 默认分支：`main`。
-- 正式 HTML 原型分支：`codex/html-prototypes`。
-- 正式 HTML 原型 PR：`https://github.com/dema-go/dema-ai-learn/pull/1`。
-- 本地正式原型 worktree：`.worktrees/codex-html-prototypes`。
+- 正式 HTML 原型已合入默认分支 `main`。
+- 历史开发分支：`codex/html-prototypes`。
+- 已完成的正式 HTML 原型 PR：`https://github.com/dema-go/dema-ai-learn/pull/1`。
 - 正式原型共 3 组、32 个画板，统一索引为 `UI原型图.md`。
-- PR #1 已完成 8 项契约测试、3 张 1440 px 总览图和 1440 / 900 / 390 px 浏览器验证。
+- 正式原型已完成 8 项契约测试、3 张 1440 px 总览图和 1440 / 900 / 390 px 浏览器验证。
 
 开始新任务前必须重新运行 `git status`、`git worktree list` 和远程 PR 检查；本节记录的是编写本文时的状态，可能已经变化。
 
