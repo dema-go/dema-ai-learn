@@ -17,3 +17,8 @@
 # Python test cache
 __pycache__/
 *.pyc
+
+# Local secrets and environment files
+.env
+.env.local
+.env.*.local
