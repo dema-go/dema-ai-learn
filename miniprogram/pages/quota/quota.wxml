@@ -1,0 +1,10 @@
+<view class="screen">
+  <view class="empty">
+    <image class="kaokao kaokao-lg" src="/assets/kaokao-sweat.svg" mode="aspectFit"/>
+    <text class="tag yellow">免费额度</text>
+    <view class="hero-title">今天的 3 次生成用完了</view>
+    <view class="meta">次日 0 点恢复。现在可以复测错题或复习记录。</view>
+  </view>
+  <button class="btn" bindtap="onRetest">去错题本</button>
+  <button class="btn ghost" bindtap="onRecords">查看记录</button>
+</view>

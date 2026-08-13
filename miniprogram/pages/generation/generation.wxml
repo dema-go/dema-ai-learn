@@ -1,0 +1,16 @@
+<view class="screen">
+  <view class="empty">
+    <image class="kaokao kaokao-lg" src="/assets/kaokao-thinking.svg" mode="aspectFit"/>
+    <view class="card-title">考考正在认真出题</view>
+    <view class="meta">可以先离开，回来时任务还在。</view>
+  </view>
+  <view class="progress"><view class="progress-bar" style="width: {{percent}}%;"></view></view>
+  <view class="stage-list">
+    <view class="stage-item {{item.cls}}" wx:for="{{stages}}" wx:key="label">{{item.label}}</view>
+  </view>
+  <view class="card">
+    <text class="tag mint">只留下有依据的题</text>
+    <view class="meta">如果材料不适合出 7 题，考考会少出几题，不硬凑。</view>
+  </view>
+  <button class="btn ghost" bindtap="onHome">返回首页，完成后提醒我</button>
+</view>

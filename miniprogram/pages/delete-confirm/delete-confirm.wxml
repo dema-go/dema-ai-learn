@@ -1,0 +1,13 @@
+<view class="screen">
+  <view class="empty">
+    <image class="kaokao kaokao-lg" src="/assets/kaokao-sweat.svg" mode="aspectFit"/>
+    <text class="tag">不可恢复</text>
+    <view class="hero-title">确定删除这份材料？</view>
+    <view class="meta">删除后无法恢复，与它关联的题目、答题记录和错题也会一并删除。</view>
+  </view>
+  <view class="card">
+    <view class="card-title">{{title}}</view>
+  </view>
+  <button class="btn danger" bindtap="onConfirm">确认永久删除</button>
+  <button class="btn ghost" bindtap="onCancel">取消，保留材料</button>
+</view>

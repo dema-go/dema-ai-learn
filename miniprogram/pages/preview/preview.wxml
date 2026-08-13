@@ -1,0 +1,18 @@
+<view class="screen">
+  <view class="empty">
+    <image class="kaokao kaokao-lg" src="/assets/kaokao-cheer.svg" mode="aspectFit"/>
+    <view class="card-title">题目检查完毕！</view>
+    <view class="meta">没有引入材料以外的知识。</view>
+  </view>
+  <view class="card">
+    <text class="tag">新闯关</text>
+    <view class="card-title">{{quiz.title}}</view>
+    <view class="list-row">
+      <view class="list-icon">{{quiz.question_count}}</view>
+      <view class="list-copy"><text class="name">{{quiz.question_count}} 道题</text><text class="sub">约 3 分钟 · 不计时，理解优先</text></view>
+    </view>
+  </view>
+  <view class="ai-notice">✦ {{quiz.ai_notice}}</view>
+  <button class="btn" bindtap="onStart">开始闯关</button>
+  <button class="btn ghost" bindtap="onBack">返回修改材料</button>
+</view>

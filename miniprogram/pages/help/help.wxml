@@ -1,0 +1,14 @@
+<view class="screen">
+  <view class="hero">
+    <view class="hero-copy">
+      <text class="tag yellow">来找考考</text>
+      <view class="hero-title">哪里不顺手，\n尽管说。</view>
+      <view class="hero-desc">题目问题尽量从题目页直接反馈。</view>
+    </view>
+    <image class="kaokao" src="/assets/kaokao-thinking.svg" mode="aspectFit"/>
+  </view>
+  <button class="input-card" bindtap="onItem" data-msg="请从题目页点「这题有问题」"><text class="input-icon">?</text><view class="list-copy"><text class="name">题目质量</text><text class="sub">无依据、答案错、有歧义等</text></view><text>›</text></button>
+  <button class="input-card" bindtap="onItem" data-msg="版权投诉通道已记录，我们会人工处理"><text class="input-icon">©</text><view class="list-copy"><text class="name">版权投诉</text><text class="sub">材料或分享内容侵犯权利</text></view><text>›</text></button>
+  <button class="input-card" bindtap="onPrivacy"><text class="input-icon">🛡</text><view class="list-copy"><text class="name">隐私与数据问题</text><text class="sub">删除、保存期限或授权</text></view><text>›</text></button>
+  <button class="input-card" bindtap="onItem" data-msg="感谢反馈，我们会继续打磨"><text class="input-icon">💬</text><view class="list-copy"><text class="name">使用建议</text><text class="sub">功能与体验反馈</text></view><text>›</text></button>
+</view>

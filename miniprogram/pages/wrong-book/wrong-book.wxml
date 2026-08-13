@@ -1,0 +1,17 @@
+<view class="screen">
+  <view class="card" wx:if="{{items.length}}">
+    <view class="list-row" wx:for="{{items}}" wx:key="quiz_id">
+      <view class="list-icon">↻</view>
+      <view class="list-copy">
+        <text class="name">{{item.title}}</text>
+        <text class="sub">{{item.wrong_count}} 道待复测</text>
+      </view>
+      <button class="text-btn" bindtap="onRetest" data-id="{{item.quiz_id}}">开始</button>
+    </view>
+  </view>
+  <view class="empty" wx:else>
+    <image class="kaokao" src="/assets/kaokao-happy.svg" mode="aspectFit"/>
+    <view class="meta">暂时没有待复测错题。再考一篇也不错。</view>
+    <button class="btn" bindtap="onCreate">再考一篇</button>
+  </view>
+</view>

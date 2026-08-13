@@ -1,0 +1,13 @@
+<view class="screen">
+  <view class="card">
+    <text class="tag">题目反馈</text>
+    <view class="card-title">{{stem}}</view>
+    <view class="meta">你的反馈会帮助考考判断题目质量。</view>
+  </view>
+  <view class="section-title">请选择最主要的问题</view>
+  <button class="input-card" wx:for="{{types}}" wx:key="id" bindtap="onPick" data-id="{{item.id}}">
+    <text class="input-icon">{{item.icon}}</text>
+    <view class="list-copy"><text class="name">{{item.name}}</text><text class="sub">{{item.desc}}</text></view>
+  </button>
+  <button class="btn" bindtap="onSubmit">提交反馈</button>
+</view>

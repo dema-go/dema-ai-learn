@@ -1,0 +1,10 @@
+<view class="screen">
+  <view class="empty">
+    <image class="kaokao kaokao-lg" src="/assets/kaokao-cheer.svg" mode="aspectFit"/>
+    <text class="tag mint">错题已清空</text>
+    <view class="hero-title">这次真记住了！</view>
+    <view class="meta">注意：这只代表本次复测表现，不宣称已经掌握。</view>
+  </view>
+  <button class="btn secondary" bindtap="onHome">带着胜利回首页</button>
+  <button class="btn ghost" bindtap="onAgain">再考一篇新材料</button>
+</view>
