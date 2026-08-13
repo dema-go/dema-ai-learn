@@ -4,6 +4,9 @@
 # Research crawler cache (third-party page snapshots)
 .firecrawl/
 
+# Isolated feature worktrees
+.worktrees/
+
 # macOS
 .DS_Store
 
