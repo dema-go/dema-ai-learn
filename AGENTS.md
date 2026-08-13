@@ -51,16 +51,18 @@
 
 1. `需求分析.md`：产品范围、核心流程、MVP、风险、指标和明确不做事项。产品决策以此为基础。
 2. `技术方案.md`：微信原生小程序、FastAPI、LangGraph、模型、任务轮询、数据表与部署方案。
-3. `docs/superpowers/specs/2026-08-13-ai-quest-miniapp-ui-design.md`：已由用户确认的正式 UI 原型规范。
-4. `docs/superpowers/plans/2026-08-13-ai-quest-html-prototypes.md`：Codex HTML 原型实施计划。
-5. `UI竞品设计调研.md`：AI 学习和游戏化学习产品的 UI 调研。
-6. `竞品调研资料.md`：产品、市场、学习科学、合规与单位经济性证据。
+3. `UI原型图.md`：32 个正式 UI 画板总览、页面锚点、状态说明、开发映射、实施优先级与验收清单。开始 UI、前端或接口联调工作时必须阅读。
+4. `docs/superpowers/specs/2026-08-13-ai-quest-miniapp-ui-design.md`：已由用户确认的正式 UI 原型规范。
+5. `docs/superpowers/plans/2026-08-13-ai-quest-html-prototypes.md`：Codex HTML 原型实施计划。
+6. `UI竞品设计调研.md`：AI 学习和游戏化学习产品的 UI 调研。
+7. `竞品调研资料.md`：产品、市场、学习科学、合规与单位经济性证据。
 
 若文档间存在冲突，使用以下优先级：
 
 ```text
 用户最新明确决定
   > 本 AGENTS.md 中记录的已确认决策
+  > UI原型图.md
   > ai-quest-miniapp-ui-design.md
   > 需求分析.md
   > 技术方案.md
@@ -108,13 +110,19 @@
 
 正式原型位于分支 `codex/html-prototypes`，对应 GitHub PR #1：
 
+- `UI原型图.md`
 - `prototypes/codex-core-flow.html`
 - `prototypes/codex-records-share.html`
 - `prototypes/codex-settings-future.html`
 - `prototypes/codex-styles.css`
 - `prototypes/codex-app.js`
+- `docs/assets/ui-prototypes/core-flow.png`
+- `docs/assets/ui-prototypes/records-share.png`
+- `docs/assets/ui-prototypes/settings-future.png`
 - `tests/test_prototypes.py`
 - `docs/prototype-verification.md`
+
+`UI原型图.md` 是后续开发的统一页面索引。实现页面、设计接口或拆分任务时，必须使用其中的画板 ID 和业务状态，不要只凭截图猜测功能。
 
 在 PR #1 合并前，主目录的 `main` 工作树看不到这些正式文件。需要查看或启动时，应进入对应 worktree，或显式查看该分支，不能误判为文件丢失。
 
@@ -256,6 +264,7 @@ python3 -m http.server 4173
 ### 9.1 开发前
 
 1. 阅读本文件和任务相关的权威文档。
+   UI、微信小程序前端或前后端联调任务还必须阅读 `UI原型图.md`。
 2. 检查 `git status -sb`、当前分支和 worktree。
 3. 明确本次任务的文件范围和验收标准。
 4. 先确认是否已有测试、实施计划或未完成 PR。
@@ -311,7 +320,8 @@ python3 -m unittest tests/test_prototypes.py -v
 - 正式 HTML 原型分支：`codex/html-prototypes`。
 - 正式 HTML 原型 PR：`https://github.com/dema-go/dema-ai-learn/pull/1`。
 - 本地正式原型 worktree：`.worktrees/codex-html-prototypes`。
-- PR #1 已完成 7 项契约测试和 1440 / 900 / 390 px 浏览器验证。
+- 正式原型共 3 组、32 个画板，统一索引为 `UI原型图.md`。
+- PR #1 已完成 8 项契约测试、3 张 1440 px 总览图和 1440 / 900 / 390 px 浏览器验证。
 
 开始新任务前必须重新运行 `git status`、`git worktree list` 和远程 PR 检查；本节记录的是编写本文时的状态，可能已经变化。
 

@@ -13,3 +13,7 @@
 # Editor and temporary files
 *.swp
 *.tmp
+
+# Python test cache
+__pycache__/
+*.pyc
