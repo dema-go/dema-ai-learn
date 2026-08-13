@@ -1,6 +1,7 @@
 from pathlib import Path
 import re
 import unittest
+import struct
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTOTYPES = ROOT / "prototypes"
@@ -9,9 +10,41 @@ PAGES = [
     PROTOTYPES / "codex-records-share.html",
     PROTOTYPES / "codex-settings-future.html",
 ]
+SUMMARY = ROOT / "UI原型图.md"
+SUMMARY_IMAGES = [
+    ROOT / "docs/assets/ui-prototypes/core-flow.png",
+    ROOT / "docs/assets/ui-prototypes/records-share.png",
+    ROOT / "docs/assets/ui-prototypes/settings-future.png",
+]
+SCREEN_IDS = (
+    "first-home", "return-home", "input-picker", "text-input", "url-input",
+    "generation", "generation-preview", "quiz-question", "quiz-correct",
+    "quiz-wrong", "question-report", "quiz-result", "wrong-retest",
+    "recent-list", "record-detail", "wrong-book", "result-card",
+    "share-landing", "shared-challenge", "subscribe-request",
+    "next-day-recall", "quota-limit", "profile", "profile-consent",
+    "privacy-data", "delete-confirm", "help-feedback", "future-photo",
+    "future-file", "future-difficulty", "future-review-plan", "future-stickers",
+)
 
 
 class PrototypeContractTests(unittest.TestCase):
+    def test_ui_summary_covers_every_formal_screen_and_overview_image(self):
+        self.assertTrue(SUMMARY.exists(), SUMMARY.name)
+        summary = SUMMARY.read_text(encoding="utf-8")
+        for page in PAGES:
+            self.assertIn(f"prototypes/{page.name}", summary)
+        for screen_id in SCREEN_IDS:
+            self.assertIn(f"#{screen_id}", summary)
+        for image in SUMMARY_IMAGES:
+            self.assertTrue(image.exists(), image)
+            self.assertIn(str(image.relative_to(ROOT)), summary)
+            with image.open("rb") as stream:
+                self.assertEqual(stream.read(8), b"\x89PNG\r\n\x1a\n")
+                width, height = struct.unpack(">II", stream.read(16)[8:16])
+            self.assertEqual(width, 1440, image.name)
+            self.assertGreaterEqual(height, 2800, image.name)
+
     def test_formal_pages_exist_and_use_shared_assets(self):
         for page in PAGES:
             self.assertTrue(page.exists(), page.name)
