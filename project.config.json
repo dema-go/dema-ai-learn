@@ -1,0 +1,17 @@
+{
+  "miniprogramRoot": "miniprogram/",
+  "compileType": "miniprogram",
+  "description": "考我一下",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "urlCheck": false,
+    "compileHotReLoad": true,
+    "useCompilerPlugins": ["typescript"]
+  },
+  "appid": "touristappid",
+  "projectname": "kaowoyixia",
+  "libVersion": "3.7.0"
+}

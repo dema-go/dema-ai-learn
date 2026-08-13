@@ -1,0 +1,18 @@
+<view class="screen">
+  <view class="card">
+    <text class="tag">记录</text>
+    <view class="card-title">{{quiz.title}}</view>
+    <view class="meta">{{quiz.question_count}} 道题 · {{quiz.is_retest ? '复测关' : '首轮'}}</view>
+  </view>
+  <view class="card" wx:for="{{quiz.questions}}" wx:key="question_id">
+    <view class="list-row">
+      <view class="list-icon">{{index + 1}}</view>
+      <view class="list-copy">
+        <text class="name">{{item.stem}}</text>
+        <text class="sub">可查看原文依据</text>
+      </view>
+    </view>
+  </view>
+  <button class="btn ghost" bindtap="onWrong">只看错题 / 去复测</button>
+  <button class="btn danger" bindtap="onDelete">删除这份材料</button>
+</view>

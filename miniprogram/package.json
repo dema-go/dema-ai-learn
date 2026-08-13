@@ -1,0 +1,8 @@
+{
+  "name": "kaowoyixia-miniprogram",
+  "private": true,
+  "description": "考我一下微信小程序",
+  "devDependencies": {
+    "miniprogram-api-typings": "^4.0.0"
+  }
+}

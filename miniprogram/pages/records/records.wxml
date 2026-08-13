@@ -1,0 +1,20 @@
+<view class="screen">
+  <view class="section-title">
+    <text>全部 {{items.length}}</text>
+  </view>
+  <view class="card" wx:if="{{items.length}}">
+    <view class="list-row" wx:for="{{items}}" wx:key="quiz_id" bindtap="onOpen" data-item="{{item}}">
+      <view class="list-icon">📄</view>
+      <view class="list-copy">
+        <text class="name">{{item.title}}</text>
+        <text class="sub">{{item.status === 'active' ? '进行中' : (item.status === 'retest' ? (item.wrong_count + ' 题待复测') : '完成')}}</text>
+      </view>
+      <text class="tag {{item.status === 'completed' ? 'mint' : (item.status === 'retest' ? 'yellow' : '')}}">{{item.status === 'active' ? '续答' : (item.status === 'retest' ? '复测' : '完成')}}</text>
+    </view>
+  </view>
+  <view class="empty" wx:else>
+    <image class="kaokao" src="/assets/kaokao-thinking.svg" mode="aspectFit"/>
+    <view class="meta">还没有闯关记录。先考一篇吧。</view>
+    <button class="btn" bindtap="onCreate">考我一下</button>
+  </view>
+</view>

@@ -1,0 +1,36 @@
+<view class="screen">
+  <view class="hero">
+    <view class="hero-copy">
+      <text class="tag {{home.primary_task.type === 'create' ? '' : 'yellow'}}">{{eyebrow}}</text>
+      <view class="hero-title">{{title}}</view>
+      <view class="hero-desc">{{desc}}</view>
+    </view>
+    <image class="kaokao" src="{{kaokao}}" mode="aspectFit"/>
+  </view>
+
+  <view class="card">
+    <view class="speech" wx:if="{{home.primary_task.type !== 'create'}}">{{speech}}</view>
+    <text class="tag mint" wx:if="{{home.primary_task.type === 'create'}}">只依据你的材料</text>
+    <view class="card-title" wx:if="{{home.primary_task.type === 'create'}}">把材料变成一场小闯关</view>
+    <view class="meta" wx:if="{{home.primary_task.type === 'create'}}">5–7 道单选与判断题，每题都能回到原文。</view>
+    <button class="btn" bindtap="onPrimary">{{primaryText}}</button>
+  </view>
+
+  <view class="section-title" wx:if="{{home.recent.length}}">
+    <text>最近闯关</text>
+    <text class="meta">全部 ›</text>
+  </view>
+  <view class="card" wx:if="{{home.recent.length}}">
+    <view class="list-row" wx:for="{{home.recent}}" wx:key="quiz_id" bindtap="onRecent" data-item="{{item}}">
+      <view class="list-icon">{{item.status === 'active' ? '🔗' : '📄'}}</view>
+      <view class="list-copy">
+        <text class="name">{{item.title}}</text>
+        <text class="sub">{{item.status === 'active' ? '进行到第 ' + item.current_ordinal + ' 题' : '答对 ' + (item.correct || 0) + ' / ' + item.total}}</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="btn ghost" wx:if="{{home.primary_task.type !== 'create'}}" bindtap="onCreate">＋ 把新材料变成闯关</button>
+
+  <view class="ai-notice">✦ AI 依据你的材料生成，可能有误 · 今日 {{home.quota.used}} / {{home.quota.limit}} 次</view>
+</view>

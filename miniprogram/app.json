@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/input-picker/input-picker",
+    "pages/text-input/text-input",
+    "pages/url-input/url-input",
+    "pages/generation/generation",
+    "pages/preview/preview",
+    "pages/quiz/quiz",
+    "pages/report/report",
+    "pages/result/result",
+    "pages/retest/retest",
+    "pages/records/records",
+    "pages/record-detail/record-detail",
+    "pages/wrong-book/wrong-book",
+    "pages/quota/quota",
+    "pages/profile/profile",
+    "pages/privacy/privacy",
+    "pages/delete-confirm/delete-confirm",
+    "pages/help/help"
+  ],
+  "window": {
+    "navigationBarTitleText": "考我一下",
+    "navigationBarBackgroundColor": "#FBF7EE",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#FBF7EE",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#6F777E",
+    "selectedColor": "#DE5848",
+    "backgroundColor": "#FFFEFA",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "text": "闯关",
+        "iconPath": "assets/tab/quest.png",
+        "selectedIconPath": "assets/tab/quest-active.png"
+      },
+      {
+        "pagePath": "pages/records/records",
+        "text": "记录",
+        "iconPath": "assets/tab/records.png",
+        "selectedIconPath": "assets/tab/records-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/tab/me.png",
+        "selectedIconPath": "assets/tab/me-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

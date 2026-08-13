@@ -1,0 +1,14 @@
+page {
+  --paper: #fbf7ee;
+  --card: #fffefa;
+  --coral: #de5848;
+  --coral-soft: #fbe2dd;
+  --mint: #78cdbf;
+  --mint-soft: #d9f0eb;
+  --yellow: #ffd45a;
+  --ink: #24292d;
+  --muted: #6f777e;
+  --line: #d8d4cb;
+  --danger: #c9443a;
+  --font: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}

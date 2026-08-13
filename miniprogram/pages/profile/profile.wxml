@@ -1,0 +1,28 @@
+<view class="screen">
+  <view class="hero">
+    <view class="hero-copy">
+      <text class="tag">匿名用户</text>
+      <view class="hero-title">今天也认真\n考过自己了</view>
+      <view class="hero-desc">无需昵称和头像，也能保留学习记录。</view>
+    </view>
+    <image class="kaokao" src="/assets/kaokao-happy.svg" mode="aspectFit"/>
+  </view>
+  <view class="btn-row">
+    <view class="card" style="text-align:center;flex:1">
+      <view class="hero-title">{{me.streak_days}}</view>
+      <view class="meta">连续天数</view>
+    </view>
+    <view class="card" style="text-align:center;flex:1">
+      <view class="hero-title">{{me.stars}}</view>
+      <view class="meta">累计星星</view>
+    </view>
+  </view>
+  <view class="card">
+    <view class="list-row">
+      <view class="list-icon">🏁</view>
+      <view class="list-copy"><text class="name">完成 {{me.completed_count}} 次闯关</text><text class="sub">复测 {{me.retest_count || 0}} 次</text></view>
+    </view>
+  </view>
+  <button class="input-card" bindtap="onPrivacy"><text class="input-icon">🛡</text><view class="list-copy"><text class="name">隐私与数据</text><text class="sub">材料默认私有，可删除</text></view><text>›</text></button>
+  <button class="input-card" bindtap="onHelp"><text class="input-icon">💬</text><view class="list-copy"><text class="name">帮助与反馈</text><text class="sub">题目质量、版权与建议</text></view><text>›</text></button>
+</view>

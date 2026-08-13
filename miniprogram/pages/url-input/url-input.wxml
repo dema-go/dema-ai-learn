@@ -1,0 +1,9 @@
+<view class="screen">
+  <view class="field">
+    <view class="field-label">网页链接</view>
+    <input class="input" value="{{url}}" bindinput="onInput" placeholder="https://"/>
+    <view class="field-error" wx:if="{{error}}">{{error}}</view>
+  </view>
+  <button class="btn" bindtap="onSubmit">解析并出题</button>
+  <view class="meta" style="margin-top:12px">只支持无需登录、付费或验证码的公开页面。失败后请改用粘贴文本。</view>
+</view>

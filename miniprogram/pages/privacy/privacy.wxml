@@ -1,0 +1,19 @@
+<view class="screen">
+  <view class="card">
+    <text class="tag mint">你的材料默认私有</text>
+    <view class="card-title">原文只做限源出题</view>
+    <view class="meta">材料短期保存 7 天，到期自动删除原文；你可随时主动删除。</view>
+  </view>
+  <view class="section-title">数据管理</view>
+  <view class="card">
+    <view class="list-row" bindtap="onRecords">
+      <view class="list-icon">📄</view>
+      <view class="list-copy"><text class="name">原始材料</text><text class="sub">短期保存 · 可逐条删除</text></view>
+      <text>›</text>
+    </view>
+  </view>
+  <view class="card">
+    <view class="card-title">请勿粘贴</view>
+    <view class="meta">机密文件、病历、身份证号、联系方式及未经允许的他人个人信息。</view>
+  </view>
+</view>

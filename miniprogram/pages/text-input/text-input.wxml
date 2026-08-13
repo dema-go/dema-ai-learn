@@ -1,0 +1,16 @@
+<view class="screen">
+  <view class="field">
+    <view class="field-label">正文内容</view>
+    <textarea class="textarea" value="{{text}}" maxlength="-1" bindinput="onInput" placeholder="把刚读完的段落贴进来"/>
+    <view class="field-foot">
+      <text>建议保留观点完整的段落</text>
+      <text>{{count}} / 8000</text>
+    </view>
+    <view class="field-error" wx:if="{{error}}">{{error}}</view>
+  </view>
+  <view class="card">
+    <text class="tag yellow">隐私提醒</text>
+    <view class="meta">原文短期保存，你可随时删除。超出 8000 字时不会静默截断。</view>
+  </view>
+  <button class="btn" bindtap="onSubmit">生成 5–7 道题</button>
+</view>

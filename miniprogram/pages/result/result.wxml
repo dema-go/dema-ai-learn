@@ -1,0 +1,15 @@
+<view class="screen">
+  <view class="empty">
+    <image class="kaokao kaokao-lg" src="/assets/kaokao-cheer.svg" mode="aspectFit"/>
+    <text class="tag yellow">闯关完成</text>
+    <view class="hero-title">答对 {{result.correct}} / {{result.total}}</view>
+    <view class="meta">完成比满分更重要。薄弱点已经找到了。</view>
+  </view>
+  <view class="ai-notice">✦ 结果来自 AI 生成题目，仅供自测参考</view>
+  <button class="btn" wx:if="{{result.wrong_question_ids.length}}" bindtap="onRetest">马上翻盘</button>
+  <button class="btn" wx:else bindtap="onAgain">再考一篇</button>
+  <view class="btn-row">
+    <button class="btn ghost" bindtap="onAgain">再考一篇</button>
+    <button class="btn ghost" bindtap="onShare">分享结果</button>
+  </view>
+</view>
