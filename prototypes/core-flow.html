@@ -1,0 +1,437 @@
+<!doctype html>
+<!-- 来源：Claude Code 生成的早期参考原型；非 Codex 正式交付，详见 prototypes/README.md。 -->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>核心业务流程 · 读后闯关</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ 吉祥物 sprite（小衰 · 清爽活力版） ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m-face" viewBox="0 0 80 82">
+    <path d="M12 76 Q40 64 68 76 L68 82 L12 82 Z" fill="#FF6B35"/>
+    <path d="M30 66 Q40 72 50 66" fill="none" stroke="#E85A28" stroke-width="2"/>
+    <path d="M34 60 L34 68 Q40 71 46 68 L46 60 Z" fill="#FFD9B8"/>
+    <circle cx="40" cy="38" r="22" fill="#FFE0B8" stroke="#1F2430" stroke-width="3"/>
+    <path d="M18 40 C18 17 62 17 62 40 C62 42 60.5 43.5 58 43.5 C55 37 48 35 40 35 C32 35 25 37 22 43.5 C19.5 43.5 18 42 18 40 Z" fill="#2A2F3A" stroke="#1F2430" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="40" cy="21" rx="7" ry="3.5" fill="#5A6275" opacity=".7"/>
+    <circle cx="31" cy="42" r="6.8" fill="#fff" stroke="#1F2430" stroke-width="2.5"/>
+    <circle cx="49" cy="42" r="6.8" fill="#fff" stroke="#1F2430" stroke-width="2.5"/>
+    <line x1="37.8" y1="42" x2="42.2" y2="42" stroke="#1F2430" stroke-width="2.5"/>
+    <circle cx="31.5" cy="43" r="2.6" fill="#1F2430"/>
+    <circle cx="49.5" cy="43" r="2.6" fill="#1F2430"/>
+    <circle cx="33" cy="42" r="1" fill="#fff"/>
+    <circle cx="51" cy="42" r="1" fill="#fff"/>
+    <path d="M34 52 Q40 58 46 52" fill="none" stroke="#1F2430" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="23" cy="50" rx="3.6" ry="2.4" fill="#FF8A80" opacity=".6"/>
+    <ellipse cx="57" cy="50" rx="3.6" ry="2.4" fill="#FF8A80" opacity=".6"/>
+  </symbol>
+  <symbol id="m-wave" viewBox="0 0 96 84">
+    <path d="M6 78 Q32 66 58 78 L58 84 L6 84 Z" fill="#FF6B35"/>
+    <path d="M24 68 Q32 74 40 68" fill="none" stroke="#E85A28" stroke-width="2"/>
+    <path d="M28 62 L28 70 Q32 73 36 70 L36 62 Z" fill="#FFD9B8"/>
+    <circle cx="32" cy="40" r="22" fill="#FFE0B8" stroke="#1F2430" stroke-width="3"/>
+    <path d="M10 42 C10 19 54 19 54 42 C54 44 52.5 45.5 50 45.5 C47 39 40 37 32 37 C24 37 17 39 14 45.5 C11.5 45.5 10 44 10 42 Z" fill="#2A2F3A" stroke="#1F2430" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="32" cy="23" rx="7" ry="3.5" fill="#5A6275" opacity=".7"/>
+    <circle cx="23" cy="44" r="6.8" fill="#fff" stroke="#1F2430" stroke-width="2.5"/>
+    <circle cx="41" cy="44" r="6.8" fill="#fff" stroke="#1F2430" stroke-width="2.5"/>
+    <line x1="29.8" y1="44" x2="34.2" y2="44" stroke="#1F2430" stroke-width="2.5"/>
+    <circle cx="23.5" cy="45" r="2.6" fill="#1F2430"/>
+    <circle cx="41.5" cy="45" r="2.6" fill="#1F2430"/>
+    <circle cx="25" cy="44" r="1" fill="#fff"/>
+    <circle cx="43" cy="44" r="1" fill="#fff"/>
+    <path d="M26 54 Q32 60 38 54" fill="none" stroke="#1F2430" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="15" cy="52" rx="3.6" ry="2.4" fill="#FF8A80" opacity=".6"/>
+    <ellipse cx="49" cy="52" rx="3.6" ry="2.4" fill="#FF8A80" opacity=".6"/>
+    <path d="M60 50 Q73 44 80 31" fill="none" stroke="#1F2430" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="82" cy="27" r="7" fill="#FFD9B8" stroke="#1F2430" stroke-width="2.5"/>
+    <path d="M86 14 Q91 16 91 21" fill="none" stroke="#FF6B35" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M79 11 Q82 7 87 6" fill="none" stroke="#FFB237" stroke-width="2.5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="m-study" viewBox="0 0 96 88">
+    <rect x="6" y="74" width="84" height="7" rx="3.5" fill="#C9D4E3"/>
+    <rect x="22" y="58" width="48" height="18" rx="2" fill="#fff" stroke="#1F2430" stroke-width="2"/>
+    <line x1="28" y1="64" x2="60" y2="64" stroke="#E6EAF0" stroke-width="2"/>
+    <line x1="28" y1="69" x2="52" y2="69" stroke="#E6EAF0" stroke-width="2"/>
+    <circle cx="40" cy="40" r="21" fill="#FFE0B8" stroke="#1F2430" stroke-width="3"/>
+    <path d="M19 42 C19 20 61 20 61 42 C61 44 59.5 45.5 57 45.5 C54 39 47 37 40 37 C33 37 26 39 23 45.5 C20.5 45.5 19 44 19 42 Z" fill="#2A2F3A" stroke="#1F2430" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="40" cy="23" rx="6.5" ry="3.3" fill="#5A6275" opacity=".7"/>
+    <circle cx="32" cy="44" r="6.4" fill="#fff" stroke="#1F2430" stroke-width="2.4"/>
+    <circle cx="48" cy="44" r="6.4" fill="#fff" stroke="#1F2430" stroke-width="2.4"/>
+    <line x1="38.4" y1="44" x2="41.6" y2="44" stroke="#1F2430" stroke-width="2.4"/>
+    <circle cx="32.5" cy="45" r="2.4" fill="#1F2430"/>
+    <circle cx="48.5" cy="45" r="2.4" fill="#1F2430"/>
+    <circle cx="34" cy="44" r="0.9" fill="#fff"/>
+    <circle cx="50" cy="44" r="0.9" fill="#fff"/>
+    <path d="M37 53 q3 3 6 0" fill="none" stroke="#1F2430" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="24" cy="51" rx="3.4" ry="2.2" fill="#FF8A80" opacity=".55"/>
+    <ellipse cx="56" cy="51" rx="3.4" ry="2.2" fill="#FF8A80" opacity=".55"/>
+    <path d="M64 60 L74 54" stroke="#1F2430" stroke-width="3.2" stroke-linecap="round"/>
+    <line x1="70" y1="52" x2="80" y2="42" stroke="#FF6B35" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="80" cy="42" r="2" fill="#1F2430"/>
+  </symbol>
+  <symbol id="m-palm" viewBox="0 0 84 84">
+    <path d="M10 78 Q32 66 54 78 L54 84 L10 84 Z" fill="#FF6B35"/>
+    <path d="M28 62 L28 70 Q32 73 36 70 L36 62 Z" fill="#FFD9B8"/>
+    <circle cx="32" cy="40" r="22" fill="#FFE0B8" stroke="#1F2430" stroke-width="3"/>
+    <path d="M10 42 C10 19 54 19 54 42 C54 44 52.5 45.5 50 45.5 C47 39 40 37 32 37 C24 37 17 39 14 45.5 C11.5 45.5 10 44 10 42 Z" fill="#2A2F3A" stroke="#1F2430" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="32" cy="23" rx="7" ry="3.5" fill="#5A6275" opacity=".7"/>
+    <circle cx="23" cy="44" r="6.8" fill="#fff" stroke="#1F2430" stroke-width="2.5"/>
+    <circle cx="23.5" cy="45" r="2.6" fill="#1F2430"/>
+    <circle cx="25" cy="44" r="1" fill="#fff"/>
+    <path d="M38 32 C50 31 56 38 56 50 C48 56 36 54 33 47 C31 40 33 34 38 32 Z" fill="#FFD9B8" stroke="#1F2430" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M43 38 q4 1 5 5" fill="none" stroke="#C56B5A" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M26 56 q5 5 10 0" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="15" cy="52" rx="3.4" ry="2.2" fill="#FF8A80" opacity=".5"/>
+    <path d="M58 24 q3.5 5 0 9 q-3.5 -4 0 -9 Z" fill="#3B82F6"/>
+    <path d="M66 18 q4 -3 8 0 M68 25 q4 3 8 0" fill="none" stroke="#EF4444" stroke-width="2.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="m-cheer" viewBox="0 0 96 94">
+    <path d="M22 70 Q40 84 58 70 L56 56 L24 56 Z" fill="#FF6B35" stroke="#1F2430" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M30 58 Q40 64 50 58" fill="none" stroke="#E85A28" stroke-width="2"/>
+    <circle cx="40" cy="38" r="22" fill="#FFE0B8" stroke="#1F2430" stroke-width="3"/>
+    <path d="M18 40 C18 17 62 17 62 40 C62 42 60.5 43.5 58 43.5 C55 37 48 35 40 35 C32 35 25 37 22 43.5 C19.5 43.5 18 42 18 40 Z" fill="#2A2F3A" stroke="#1F2430" stroke-width="3" stroke-linejoin="round"/>
+    <ellipse cx="40" cy="21" rx="7" ry="3.5" fill="#5A6275" opacity=".7"/>
+    <path d="M24 41 q3 -4 6 0" fill="none" stroke="#1F2430" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M36 41 q3 -4 6 0" fill="none" stroke="#1F2430" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M31 49 Q40 60 49 49 Q40 54 31 49 Z" fill="#1F2430"/>
+    <path d="M34 52 Q40 56 46 52" fill="#FF8A80"/>
+    <ellipse cx="22" cy="50" rx="3.6" ry="2.4" fill="#FF8A80" opacity=".6"/>
+    <ellipse cx="58" cy="50" rx="3.6" ry="2.4" fill="#FF8A80" opacity=".6"/>
+    <path d="M24 58 Q14 44 20 28" fill="none" stroke="#1F2430" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M56 58 Q66 44 60 28" fill="none" stroke="#1F2430" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="19" cy="25" r="6.5" fill="#FFD9B8" stroke="#1F2430" stroke-width="2.5"/>
+    <circle cx="61" cy="25" r="6.5" fill="#FFD9B8" stroke="#1F2430" stroke-width="2.5"/>
+    <path d="M10 14 l1.6 4 4 1.4 -4 1.4 -1.6 4 -1.6 -4 -4 -1.4 4 -1.4 Z" fill="#FFB237"/>
+    <path d="M84 12 l1.3 3.2 3.2 1.2 -3.2 1.2 -1.3 3.2 -1.3 -3.2 -3.2 -1.2 3.2 -1.2 Z" fill="#22C55E"/>
+  </symbol>
+  <symbol id="m-card" viewBox="0 0 96 96">
+    <path d="M22 74 Q40 88 58 74 L56 60 L24 60 Z" fill="#3B82F6" stroke="#1F2430" stroke-width="2.5" stroke-linejoin="round"/>
+    <g transform="rotate(-4 47 30)">
+      <rect x="28" y="6" width="38" height="46" rx="4" fill="#fff" stroke="#1F2430" stroke-width="2.5"/>
+      <path d="M28 6 L66 6 L66 18 L28 18 Z" fill="#FF6B35"/>
+      <text x="47" y="15.5" text-anchor="middle" font-family="PingFang SC, sans-serif" font-size="8" font-weight="700" fill="#fff">成绩单</text>
+      <text x="47" y="38" text-anchor="middle" font-family="PingFang SC, sans-serif" font-size="17" font-weight="800" fill="#FF6B35">5/7</text>
+      <text x="47" y="47" text-anchor="middle" font-family="PingFang SC, sans-serif" font-size="7" fill="#5B6472">正确率 71%</text>
+    </g>
+    <path d="M30 44 L22 54" stroke="#1F2430" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M64 44 L72 54" stroke="#1F2430" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="40" cy="66" r="18" fill="#FFE0B8" stroke="#1F2430" stroke-width="2.8"/>
+    <path d="M22 68 C22 50 58 50 58 68 C58 70 56.7 71 54.5 71 C52 66 46 64.5 40 64.5 C34 64.5 28 66 25.5 71 C23.3 71 22 70 22 68 Z" fill="#2A2F3A" stroke="#1F2430" stroke-width="2.8" stroke-linejoin="round"/>
+    <ellipse cx="40" cy="52" rx="5.5" ry="2.8" fill="#5A6275" opacity=".7"/>
+    <path d="M31 67 q2.5 -3 5 0" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M39 67 q2.5 -3 5 0" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M34 75 q6 5 12 0" fill="none" stroke="#1F2430" stroke-width="2.4" stroke-linecap="round"/>
+    <ellipse cx="27" cy="74" rx="3" ry="2" fill="#FF8A80" opacity=".55"/>
+    <ellipse cx="53" cy="74" rx="3" ry="2" fill="#FF8A80" opacity=".55"/>
+  </symbol>
+</svg>
+
+<!-- ============ 页头 ============ -->
+<div class="page-head">
+  <div class="page-title">读后闯关 <span class="bar">·</span> 核心业务流程</div>
+  <div class="page-sub">粘贴 → AI 限源出题 → 3 分钟闯关 → 每题回原文 → 次日复测错题</div>
+  <div class="page-chips">
+    <span class="pill amber">MVP 主线</span>
+    <span class="pill">11 屏</span>
+    <span class="pill ghost">清爽活力风</span>
+    <span class="pill ghost">高可读 · 卡通生动</span>
+  </div>
+</div>
+
+<!-- ============ 屏幕网格 ============ -->
+<div class="grid">
+
+  <!-- ① 启动登录 -->
+  <div class="frame">
+    <div class="caption"><span class="num">1</span>启动 · 静默登录</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen tc" style="padding:54px 22px 22px">
+        <div class="logo-stamp" style="margin:0 auto 16px"><span class="hand" style="font-size:30px;color:#fff">闯</span></div>
+        <div class="hand" style="font-size:22px;letter-spacing:2px">读后闯关</div>
+        <div class="small muted mt-8">把刚读完的，变成一关</div>
+        <div class="mt-20"><svg class="mascot" width="68" height="68"><use href="#m-face"/></svg></div>
+        <div class="mt-12 muted small">微信一键登录中 ···</div>
+        <div class="barline mt-16" style="margin:14px auto 0;max-width:170px"><i style="width:45%"></i></div>
+        <div class="hint tc" style="justify-content:center;margin-top:54px">登录即同意 <span class="code">用户协议</span> 与 <span class="code">隐私保护指引</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 首次引导 -->
+  <div class="frame">
+    <div class="caption"><span class="num">2</span>首次引导（≤1 屏）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="topbar"><span class="back">‹</span><span class="tt">欢迎</span><span class="act">跳过</span></div>
+        <div class="mascot-row" style="justify-content:center;margin-top:6px">
+          <svg class="mascot" width="78" height="64"><use href="#m-wave"/></svg>
+        </div>
+        <div class="bubble" style="margin:14px auto 0;max-width:260px">嗨！我是<b>小衰</b>✋ 把你刚读完的东西贴进来，我陪你把它变成一关，答错也没关系～</div>
+        <div class="mt-16 col">
+          <div class="onboard-step"><span class="n">1</span><span>粘贴文本 / 公开网页链接</span></div>
+          <div class="onboard-step"><span class="n">2</span><span>AI 只依据原文出 5–7 题</span></div>
+          <div class="onboard-step"><span class="n">3</span><span>闯关，每题都能回看原文依据</span></div>
+        </div>
+        <button class="btn btn-primary btn-block mt-16">开始体验 ▸</button>
+        <div class="small muted tc mt-8">第一关免登录，先玩再说</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 首页 -->
+  <div class="frame">
+    <div class="caption"><span class="num">3</span>首页</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="topbar">
+          <span style="display:flex;align-items:center;gap:8px"><svg class="mascot" width="30" height="30"><use href="#m-face"/></svg><b style="font-size:15px">你好，同学</b></span>
+          <span class="pill" style="font-size:11px">今日 2/3 次</span>
+        </div>
+        <div class="card" style="background:var(--amber);border-color:var(--ink)">
+          <div style="color:#fff;font-weight:700;font-size:15px">✏️ 把内容变成闯关</div>
+          <div style="color:#fff;opacity:.9;font-size:12px;margin-top:4px">粘贴文本 · 或公开网页链接</div>
+        </div>
+        <div class="card" style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:22px">⏰</div>
+          <div class="grow"><div style="font-weight:700;font-size:14px">错题待复测 · 3 道</div><div class="small muted">来自昨天 · 微信读书讲义</div></div>
+          <span class="btn btn-sm btn-moss">去复测</span>
+        </div>
+        <div class="section-label">最近闯关</div>
+        <div class="card soft">
+          <div class="li">
+            <div class="ic">📑</div>
+            <div class="grow"><div class="t">产品经理讲义 · 第三章</div><div class="s">7 题 · 全对 · 2 分钟</div></div>
+            <div class="r"><span class="pill moss" style="font-size:10px">满分</span></div>
+          </div>
+          <div class="li">
+            <div class="ic">📑</div>
+            <div class="grow"><div class="t">2026 行业趋势报告</div><div class="s">答到 5/6 · 未完成</div></div>
+            <div class="r"><span class="pill amber" style="font-size:10px">继续 ▸</span></div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="tb on"><span class="ic">🏠</span>首页</div>
+          <div class="tb"><span class="ic">📊</span>我的</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 内容输入 -->
+  <div class="frame">
+    <div class="caption"><span class="num">4</span>内容输入</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="topbar"><span class="back">‹</span><span class="tt">新建闯关</span><span></span></div>
+        <div class="tabs">
+          <div class="tab active">粘贴文本</div>
+          <div class="tab">网页链接</div>
+        </div>
+        <div class="mt-12">
+          <div class="field">把刚读完的文章、讲义、资料粘贴进来——AI 只依据这些内容出题，不会额外编造知识。<br><br>例如：今天读到的这篇关于「间隔重复」的学习科学综述……</div>
+          <div class="meter">
+            <span>1,240 字</span>
+            <span class="bar"><i style="width:15.5%"></i></span>
+            <span>上限 8,000</span>
+          </div>
+        </div>
+        <div class="hint">ⓘ 别粘贴 <b>机密 / 病历 / 含个人信息</b> 的材料；内容仅短时保留，可随时删除</div>
+        <button class="btn btn-primary btn-block mt-16">生成闯关 ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑤ 正文预览裁剪 -->
+  <div class="frame">
+    <div class="caption"><span class="num">5</span>正文预览 · 裁剪（URL 抽取后）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="topbar"><span class="back">‹</span><span class="tt">正文预览</span><span class="act">重新粘贴</span></div>
+        <div class="between mt-8">
+          <span class="small muted">已抽取正文（已去导航/广告/评论）</span>
+          <span class="seg"><span class="on">全文</span><span>选段</span></span>
+        </div>
+        <div class="preview mt-12">间隔重复（Spaced Repetition）是一种利用心理间隔来强化记忆的学习技术。其核心原理在于：在信息即将被遗忘的临界点重新复习，能够以最小的时间成本最大化长期记忆留存率。<span class="hl">研究表明，主动提取练习相较单纯重读，显著改善一周后的回忆表现。</span>这一结论源自 Karpicke 与 Roediger 的经典实验……</div>
+        <div class="meter mt-12"><span>共 3,180 字</span><span class="bar"><i style="width:40%"></i></span><span>建议 ≤ 8,000</span></div>
+        <div class="hint">ⓘ 太长会拖慢出题、增加等待。可切到「选段」只留重点段落</div>
+        <button class="btn btn-primary btn-block mt-16">就用这段出题 ▸</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ 生成等待 -->
+  <div class="frame">
+    <div class="caption"><span class="num">6</span>生成等待（提交任务 + 轮询）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen tc" style="padding-top:30px">
+        <svg class="mascot" width="110" height="96"><use href="#m-study"/></svg>
+        <div class="hand mt-8" style="font-size:18px">小衰正在奋笔疾书…</div>
+        <div class="small muted mt-8">正在校验题目质量</div>
+        <div class="barline mt-16" style="margin:14px auto 0;max-width:240px"><i style="width:78%"></i></div>
+        <div class="col mt-20" style="text-align:left;max-width:240px;margin-left:auto;margin-right:auto;gap:8px">
+          <div class="small"><span style="color:var(--moss)">✓</span> 已理解原文</div>
+          <div class="small"><span style="color:var(--moss)">✓</span> 已生成第 6 题</div>
+          <div class="small"><span style="color:var(--amber)">◌</span> 正在校验 · 答案是否真在原文</div>
+          <div class="small muted">○ 即将完成</div>
+        </div>
+        <div class="hint tc" style="justify-content:center;margin-top:24px">通常 10–20 秒，可退出后台，回来继续</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ 答题 -->
+  <div class="frame">
+    <div class="caption"><span class="num">7</span>闯关答题</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="topbar"><span class="back">‹</span><span class="between grow"><span class="tt">第 3 关</span><span class="small muted">02:14</span></span><span class="act">退出</span></div>
+        <div class="between mt-8">
+          <div class="stamps">
+            <span class="stamp done"></span><span class="stamp wrong"></span><span class="stamp cur"></span><span class="stamp"></span><span class="stamp"></span><span class="stamp"></span><span class="stamp"></span>
+          </div>
+          <span class="small muted">3 / 7</span>
+        </div>
+        <div class="quiz-stem mt-16">根据原文，关于「间隔重复」，下列说法<b>正确</b>的是？<span class="ai ai-corner">依据材料生成</span></div>
+        <div class="options">
+          <div class="option"><span class="key">A</span><span class="txt">在信息即将被遗忘时复习，效果最好</span></div>
+          <div class="option selected"><span class="key">B</span><span class="txt">连续集中复习比分散复习更有效</span><span class="pick">✓</span></div>
+          <div class="option"><span class="key">C</span><span class="txt">主动提取练习效果不如单纯重读</span></div>
+        </div>
+        <button class="btn btn-primary btn-block mt-16">提交答案</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑧ 单题反馈（答错） -->
+  <div class="frame">
+    <div class="caption"><span class="num">8</span>单题反馈（答错 · 即时讲解 + 原文依据）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="feedback-head">
+          <div class="verdict no">✗</div>
+          <div class="grow">
+            <div style="font-weight:700">答错啦</div>
+            <div class="small muted">正确答案：A</div>
+          </div>
+          <svg class="mascot" width="46" height="45"><use href="#m-palm"/></svg>
+        </div>
+        <div class="bubble" style="background:#FDEAEA">哎呀我又错了……集中复习看着努力，其实不如分散开来 😣</div>
+        <div class="card soft mt-12">
+          <div class="section-label" style="margin:0 0 6px">💡 知识讲解</div>
+          <div class="explain">原文结论是<b>分散复习（间隔重复）优于集中复习</b>。在临界遗忘点复习，能用最少时间换最大留存。</div>
+        </div>
+        <div class="card soft mt-12">
+          <span class="src-tag">📖 原文依据</span>
+          <div class="source" style="border:none;padding:0;background:none">
+            «…<span class="hl">在信息即将被遗忘的临界点重新复习</span>，能够以最小的时间成本最大化长期记忆留存率…»
+          </div>
+          <a class="to-source">回到原文位置 ↗</a>
+        </div>
+        <div class="between mt-12">
+          <span class="btn btn-sm btn-ghost">⚑ 这题有问题</span>
+          <button class="btn btn-sm btn-primary">下一题 ▸</button>
+        </div>
+        <div class="ai" style="margin-top:10px">依据材料生成，可能有误</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑨ 结果页 -->
+  <div class="frame">
+    <div class="caption"><span class="num">9</span>结果页</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen tc">
+        <div style="font-family:var(--font-hand);font-size:24px;margin-top:8px">闯关完成！🎉</div>
+        <svg class="mascot" width="96" height="92" style="margin:6px auto 0;display:block"><use href="#m-cheer"/></svg>
+        <div class="score-big mt-8">5<span class="small"> / 7</span></div>
+        <div class="small muted">正确率 71% · 用时 3 分 12 秒</div>
+        <div class="section-label" style="justify-content:center">❌ 错题 · 2 道</div>
+        <div class="card soft" style="text-align:left">
+          <div class="li"><div class="ic" style="background:#FDEAEA;border-color:var(--tomato)">✗</div><div class="grow"><div class="t">Q3 · 关于间隔重复的原理</div><div class="s">选了 B，应为 A</div></div></div>
+          <div class="li"><div class="ic" style="background:#FDEAEA;border-color:var(--tomato)">✗</div><div class="grow"><div class="t">Q5 · 主动提取 vs 重读</div><div class="s">选了 C，应为 A</div></div></div>
+        </div>
+        <button class="btn btn-primary btn-block mt-16">🔁 复测这 2 道错题</button>
+        <div class="row mt-12">
+          <button class="btn btn-ghost btn-sm grow">再来一关</button>
+          <button class="btn btn-ghost btn-sm grow">分享成绩</button>
+        </div>
+        <div class="ai" style="margin-top:12px">依据材料生成，可能有误</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑩ 结果卡分享 -->
+  <div class="frame">
+    <div class="caption"><span class="num">10</span>结果卡分享（全自愿 · 无诱导）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen tc">
+        <div class="topbar"><span class="back">‹</span><span class="tt">成绩单</span><span></span></div>
+        <div class="result-card mt-8">
+          <span class="tape"></span>
+          <div class="small muted hand">读后闯关 · 成绩单</div>
+          <div class="score-big mt-8">5<span class="small">/7</span></div>
+          <div class="small muted">《产品经理讲义 · 第三章》</div>
+          <svg class="mascot" width="64" height="64" style="margin:8px auto 0;display:block"><use href="#m-card"/></svg>
+          <div class="small mt-8">正确率 71% · 3 分 12 秒</div>
+          <div class="ai" style="margin:10px auto 0">依据材料生成，可能有误</div>
+        </div>
+        <div class="hint tc" style="justify-content:center">分享<b>仅含成绩与主题</b>，不含原文与整套题目</div>
+        <button class="btn btn-primary btn-block mt-12">分享给好友 / 群</button>
+        <div class="small muted tc mt-8">全凭自愿 · 不分享也能正常使用</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑪ 错题复测 -->
+  <div class="frame">
+    <div class="caption"><span class="num">11</span>错题复测（基于错题重新出题）</div>
+    <div class="phone">
+      <div class="statusbar"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span><span class="battery"></span></div>
+      <div class="screen">
+        <div class="topbar"><span class="back">‹</span><span class="tt">错题复测</span><span class="pill tomato" style="font-size:10px">2 题</span></div>
+        <div class="card" style="background:#FDEAEA;border-color:var(--tomato);font-size:12.5px">🔁 只针对刚才答错的 2 道重新出题，换个角度再考一次</div>
+        <div class="between mt-12">
+          <div class="stamps"><span class="stamp cur"></span><span class="stamp"></span></div>
+          <span class="small muted">1 / 2</span>
+        </div>
+        <div class="quiz-stem mt-12">下列哪项最能体现「间隔重复」的核心思想？<span class="ai ai-corner">依据材料生成</span></div>
+        <div class="options">
+          <div class="option"><span class="key">A</span><span class="txt">考前一晚把内容连刷五遍</span></div>
+          <div class="option"><span class="key">B</span><span class="txt">在临界遗忘点用最少次数复习</span></div>
+          <div class="option selected"><span class="key">C</span><span class="txt">每天把所有内容从头读一遍</span><span class="pick">✓</span></div>
+        </div>
+        <button class="btn btn-primary btn-block mt-16">提交答案</button>
+        <div class="small muted tc mt-8">复测结果会更新你的掌握情况</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="foot-note">
+  读后闯关 · 核心业务流程原型 <span class="muted">/ 共 11 屏 / 一行三列响应式</span>
+  <div class="legend">
+    <span class="pill ghost">🟧 主 CTA</span>
+    <span class="pill ghost">🟩 答对 / 通过</span>
+    <span class="pill ghost">🟥 答错 / 纠错</span>
+    <span class="pill ghost">📘 原文依据</span>
+    <span class="pill ghost">🤖 AI 标识</span>
+  </div>
+</div>
+
+</body>
+</html>

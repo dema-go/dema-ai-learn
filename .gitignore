@@ -1,0 +1,12 @@
+# Local visual brainstorming sessions
+.superpowers/
+
+# Research crawler cache (third-party page snapshots)
+.firecrawl/
+
+# macOS
+.DS_Store
+
+# Editor and temporary files
+*.swp
+*.tmp
