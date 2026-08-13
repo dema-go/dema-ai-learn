@@ -70,6 +70,18 @@ class PrototypeContractTests(unittest.TestCase):
             self.assertIn(copy, text)
         self.assertNotIn("分享解锁", text)
 
+    def test_settings_future_inventory(self):
+        text = (PROTOTYPES / "codex-settings-future.html").read_text(encoding="utf-8")
+        for screen_id in ("profile", "profile-consent", "privacy-data", "delete-confirm",
+                          "help-feedback", "future-photo", "future-file", "future-difficulty",
+                          "future-review-plan", "future-stickers"):
+            self.assertIn(f'id="{screen_id}"', text)
+        for copy in ("可跳过", "短期保存", "删除后", "版权投诉", "题目质量",
+                     "拍照导入", "PDF / Word / PPT", "题量与难度", "间隔复习",
+                     "成就贴纸册"):
+            self.assertIn(copy, text)
+        self.assertGreaterEqual(text.count("敬请期待"), 5)
+
 
 if __name__ == "__main__":
     unittest.main()
