@@ -59,6 +59,17 @@ class PrototypeContractTests(unittest.TestCase):
         self.assertIn("8000", text)
         self.assertIn("公开网页", text)
 
+    def test_records_share_inventory(self):
+        text = (PROTOTYPES / "codex-records-share.html").read_text(encoding="utf-8")
+        for screen_id in ("recent-list", "record-detail", "wrong-book", "result-card",
+                          "share-landing", "shared-challenge", "subscribe-request",
+                          "next-day-recall", "quota-limit"):
+            self.assertIn(f'id="{screen_id}"', text)
+        for copy in ("不包含原文", "预览题", "暂不开启", "3 道错题", "每日 3 次",
+                     "挑战同一关", "创建自己的闯关", "AI 生成"):
+            self.assertIn(copy, text)
+        self.assertNotIn("分享解锁", text)
+
 
 if __name__ == "__main__":
     unittest.main()
