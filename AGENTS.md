@@ -198,28 +198,28 @@ Agent 只能修改自己任务范围内的 worktree。涉及共享 API 时，先
 
 ## 7. 前后端同时启动与资源隔离
 
-### 7.1 分别从不同 worktree 启动
+### 7.1 本地联调（代码已合入 main 后）
 
-示例：
+后端：
 
 ```bash
-# 终端 A：后端 worktree
-cd .worktrees/backend
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+cp .env.example .env   # 填入 DEEPSEEK_API_KEY；切勿提交 .env
 uvicorn app.main:app --host 127.0.0.1 --port 8000
-
-# 终端 B：前端 worktree
-cd .worktrees/miniprogram
-npm run dev -- --port 3000
 ```
 
-前端访问 `http://127.0.0.1:8000` 即可。代码不需要处于同一目录。
+小程序：用微信开发者工具导入仓库根目录，或导入 `miniprogram/`。必须用**模拟器**访问 `127.0.0.1:8000`，并关闭合法域名校验。真机预览连不上本机后端。
 
-微信小程序正式联调时，还需遵守微信开发者工具、合法域名和云托管约束；本地 HTML 原型可用静态服务器：
+HTML 原型仍可用静态服务器：
 
 ```bash
-cd .worktrees/codex-html-prototypes
 python3 -m http.server 4173
 ```
+
+新功能仍应在独立 worktree 开发，不要直接在 `main` 上堆未完成改动。
 
 ### 7.2 端口约定
 
@@ -244,18 +244,17 @@ python3 -m http.server 4173
 
 ## 8. 技术方向
 
-当前技术方案的目标架构：
+当前技术方案与已落地实现：
 
-- 微信小程序原生 + TypeScript；
-- TDesign 小程序组件库；
-- 首版 WebView 渲染；
-- Python 3.11+；
-- FastAPI；
-- LangGraph + LangChain；
-- 主力模型 DeepSeek strict tool calling，备用 GLM；
-- MySQL；
-- 微信云托管；
-- 生成流程采用后台任务 + 轮询，不依赖 SSE。
+- 微信小程序原生 + TypeScript；主界面按正式 HTML 原型手写，**不使用 TDesign** 承载卡通 UI；
+- 首版使用微信默认 WebView 渲染，不用 Skyline，也不用 `<web-view>` 套网页；
+- Python 3.11+、FastAPI、SQLAlchemy 2；
+- LangGraph 1.2.11 `StateGraph` + `Send` 并行出题，不配 checkpointer，不用 `create_agent`；
+- 主力模型 DeepSeek `deepseek-v4-flash` + `with_structured_output(method="function_calling", strict=True)`；V4 默认思考模式不支持 `tool_choice`，必须传 `extra_body={"thinking": {"type": "disabled"}}`；
+- 无 `DEEPSEEK_API_KEY` 时走限源 `FixtureQuizModel`；单元测试强制 Fixture，禁止默认打真实模型；
+- 本地与测试默认 SQLite；MySQL、微信云托管、GLM 备用尚未接入；
+- 生成目前在 `POST /api/quiz/generate` 内同步跑完；小程序已有轮询页，后台异步任务仍待生产化；
+- 开发期用户识别：请求头 `X-Dev-Openid`，缺省 `dev-local-user`。
 
 模型和第三方依赖版本、价格、平台规则可能变化。涉及这些时必须重新核验官方资料，不要仅凭本文中的历史结论升级或替换。
 
@@ -288,13 +287,14 @@ git diff --check
 git status -sb
 ```
 
-当前 HTML 原型测试：
+当前测试命令：
 
 ```bash
 python3 -m unittest tests/test_prototypes.py -v
+cd backend && pytest tests/ -q
 ```
 
-未来后端和小程序建立正式测试命令后，应在此补充，并优先运行项目统一入口。
+后端测试必须使用 Fixture 模型，不得读取本机 `.env` 去打 DeepSeek。小程序以微信开发者工具模拟器验收，不单靠静态搜索。
 
 浏览器 UI 改动至少验证：
 
@@ -317,11 +317,12 @@ python3 -m unittest tests/test_prototypes.py -v
 
 - GitHub：`dema-go/dema-ai-learn`，私有仓库。
 - 默认分支：`main`。
-- 正式 HTML 原型已合入默认分支 `main`。
-- 历史开发分支：`codex/html-prototypes`。
-- 已完成的正式 HTML 原型 PR：`https://github.com/dema-go/dema-ai-learn/pull/1`。
+- 正式 HTML 原型已合入 `main`（PR #1，分支 `codex/html-prototypes`）。
+- **P0+P1 本地 MVP 已合入 `main`**：`backend/` FastAPI + LangGraph，`miniprogram/` 微信原生小程序，`contracts/openapi.yaml`。
+- 已确认范围：粘贴文本 / 公开网页、单选与判断、原文依据、答题与错题复测、记录 / 额度 / 隐私删除。
+- 明确未做：分享落地、订阅提醒、微信登录正式态、云托管、MySQL、P2 社交与召回。结果页分享按钮 toast「分享稍后开放」。
+- 密钥只放 `backend/.env`，已被 `.gitignore` 忽略；仓库只保留 `backend/.env.example`。
 - 正式原型共 3 组、32 个画板，统一索引为 `UI原型图.md`。
-- 正式原型已完成 8 项契约测试、3 张 1440 px 总览图和 1440 / 900 / 390 px 浏览器验证。
 
 开始新任务前必须重新运行 `git status`、`git worktree list` 和远程 PR 检查；本节记录的是编写本文时的状态，可能已经变化。
 

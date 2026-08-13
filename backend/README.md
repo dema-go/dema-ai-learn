@@ -17,5 +17,6 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 pytest tests/ -v
 ```
 
-有 `DEEPSEEK_API_KEY` 时会走 `deepseek-v4-flash` + strict function calling。
+有 `DEEPSEEK_API_KEY` 时会走 `deepseek-v4-flash` + strict function calling，并关闭思考模式（`thinking.type=disabled`）。
 开发期用户识别请求头：`X-Dev-Openid`。
+切勿提交 `.env`。
