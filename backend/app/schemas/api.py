@@ -82,3 +82,58 @@ class AnswerRequest(BaseModel):
 
 class FeedbackRequest(BaseModel):
     error_type: Literal["no_evidence", "wrong_answer", "ambiguous", "too_easy"]
+
+
+class HealthResponse(BaseModel):
+    status: Literal["ok"]
+
+
+class OkResponse(BaseModel):
+    ok: bool
+
+
+class QuestionOut(BaseModel):
+    question_id: str
+    question_type: Literal["single", "true_false"]
+    stem: str
+    options: list[str]
+    answer_index: int
+    explanation: str
+    source_span: str
+    quality_status: Literal["passed", "degraded"]
+    knowledge_point: str = ""
+    ordinal: int = 0
+
+
+class QuizResult(BaseModel):
+    correct: int
+    total: int
+    duration_seconds: int
+    wrong_question_ids: list[str]
+
+
+class AnswerResponse(BaseModel):
+    is_correct: bool
+    correct_index: int
+    explanation: str
+    source_span: str
+    attempt_id: str
+    next_question_id: str | None = None
+    finished: bool
+    result: QuizResult | None = None
+
+
+class QuizResponse(BaseModel):
+    id: str
+    material_id: str
+    title: str = ""
+    question_count: int
+    is_degraded: bool
+    is_retest: bool
+    parent_quiz_id: str | None = None
+    questions: list[QuestionOut]
+    ai_notice: str
+
+
+class RecentListResponse(BaseModel):
+    items: list[RecentItemOut]

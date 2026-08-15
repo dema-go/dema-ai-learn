@@ -10,6 +10,7 @@ from app.api.material import router as material_router
 from app.api.quiz import router as quiz_router
 from app.db import init_db
 from app.errors import DomainError
+from app.schemas.api import HealthResponse
 
 
 @asynccontextmanager
@@ -28,7 +29,7 @@ def create_app() -> FastAPI:
             content={"error": {"code": exc.code, "message": exc.message}},
         )
 
-    @app.get("/health")
+    @app.get("/health", response_model=HealthResponse)
     def health() -> dict[str, str]:
         return {"status": "ok"}
 
