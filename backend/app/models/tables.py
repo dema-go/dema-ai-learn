@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.types import JSON
 
@@ -127,6 +127,9 @@ class Attempt(Base):
 
 class Answer(Base):
     __tablename__ = "answer"
+    __table_args__ = (
+        Index("uq_answer_attempt_question", "attempt_id", "question_id", unique=True),
+    )
 
     id: Mapped[str] = mapped_column(String(32), primary_key=True, default=new_id)
     attempt_id: Mapped[str] = mapped_column(ForeignKey("attempt.id"), index=True)

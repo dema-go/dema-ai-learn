@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
-
 from datetime import datetime, timezone
+
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 from app.errors import DomainError
 from app.models.tables import Answer, Attempt, Question, Quiz, User
@@ -128,18 +129,7 @@ def submit_answer(
             db.add(attempt)
             db.flush()
 
-    existing = (
-        db.query(Answer)
-        .filter(Answer.attempt_id == attempt.id, Answer.question_id == question.id)
-        .one_or_none()
-    )
-    if existing is not None:
-        return _answer_response(db, quiz, question, attempt, existing)
-
     answered_before = db.query(Answer).filter(Answer.attempt_id == attempt.id).count()
-    if answered_before == 0:
-        track_event(db, user.id, "quiz_started", {"quiz_id": quiz.id})
-
     is_correct = chosen_index == question.answer_index
     answer = Answer(
         attempt_id=attempt.id,
@@ -147,7 +137,22 @@ def submit_answer(
         chosen_index=chosen_index,
         is_correct=is_correct,
     )
-    db.add(answer)
+    try:
+        with db.begin_nested():
+            db.add(answer)
+            db.flush()
+    except IntegrityError:
+        replayed = (
+            db.query(Answer)
+            .filter(Answer.attempt_id == attempt.id, Answer.question_id == question.id)
+            .one_or_none()
+        )
+        if replayed is None:
+            raise
+        return _answer_response(db, quiz, question, attempt, replayed)
+
+    if answered_before == 0:
+        track_event(db, user.id, "quiz_started", {"quiz_id": quiz.id})
     if is_correct:
         attempt.score += 1
         user.stars += 1

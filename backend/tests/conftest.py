@@ -1,8 +1,14 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
+
+os.environ["KAOWOYIXIA_ENV_FILE"] = ""
+os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["DEEPSEEK_API_KEY"] = ""
 
 from app.adapters.quiz_model import FixtureQuizModel
 from app.db import get_db

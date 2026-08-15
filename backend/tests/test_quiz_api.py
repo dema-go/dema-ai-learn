@@ -1,5 +1,10 @@
 import time
 
+import pytest
+from sqlalchemy.exc import IntegrityError
+
+from app.models.tables import Answer, Attempt, User
+
 SOURCE = (
     "研究者认为，人们常常通过拖延来暂时逃避任务引发的焦虑、无聊或自我怀疑。"
     "这种短期情绪修复，会带来更大的长期压力。"
@@ -58,7 +63,7 @@ def test_answer_correct_and_wrong(client):
     assert res.json()["correct_index"] == second["answer_index"]
 
 
-def test_duplicate_answer_returns_stored_result_without_scoring_twice(client):
+def test_duplicate_answer_returns_stored_result_without_scoring_twice(client, db_session):
     quiz = ready_quiz(client)
     first = quiz["questions"][0]
     payload = {
@@ -82,6 +87,11 @@ def test_duplicate_answer_returns_stored_result_without_scoring_twice(client):
     assert replay_body["attempt_id"] == first_body["attempt_id"]
     assert replay_body["is_correct"] is True
     assert replay_body["correct_index"] == first["answer_index"]
+    attempt = db_session.query(Attempt).filter(Attempt.id == first_body["attempt_id"]).one()
+    user = db_session.query(User).filter(User.id == attempt.user_id).one()
+    assert db_session.query(Answer).filter(Answer.attempt_id == attempt.id).count() == 1
+    assert attempt.score == 1
+    assert user.stars == 1
 
     last = None
     for question in quiz["questions"][1:]:
@@ -106,6 +116,35 @@ def test_duplicate_answer_returns_stored_result_without_scoring_twice(client):
     )
     assert completed_replay.status_code == 200
     assert completed_replay.json()["result"]["correct"] == len(quiz["questions"])
+    db_session.refresh(attempt)
+    db_session.refresh(user)
+    assert (
+        db_session.query(Answer).filter(Answer.attempt_id == attempt.id).count()
+        == len(quiz["questions"])
+    )
+    assert attempt.score == len(quiz["questions"])
+    assert user.stars == len(quiz["questions"])
+
+
+def test_attempt_question_rejects_duplicate_answer_rows(client, db_session):
+    quiz = ready_quiz(client)
+    first = quiz["questions"][0]
+    response = client.post(
+        f"/api/quiz/{quiz['id']}/answer",
+        json={"question_id": first["question_id"], "chosen_index": first["answer_index"]},
+    )
+    assert response.status_code == 200
+
+    db_session.add(
+        Answer(
+            attempt_id=response.json()["attempt_id"],
+            question_id=first["question_id"],
+            chosen_index=(first["answer_index"] + 1) % len(first["options"]),
+            is_correct=False,
+        )
+    )
+    with pytest.raises(IntegrityError):
+        db_session.flush()
 
 
 def test_finish_quiz_returns_result(client):
