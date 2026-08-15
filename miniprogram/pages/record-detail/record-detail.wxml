@@ -13,6 +13,10 @@
       </view>
     </view>
   </view>
-  <button class="btn ghost" bindtap="onWrong">只看错题 / 去复测</button>
-  <button class="btn danger" bindtap="onDelete">删除这份材料</button>
+  <view class="action-group action-group--primary button-stack">
+    <button class="btn ghost" bindtap="onWrong">只看错题 / 去复测</button>
+  </view>
+  <view class="action-group action-group--secondary button-stack">
+    <button class="btn danger" bindtap="onDelete">删除这份材料</button>
+  </view>
 </view>

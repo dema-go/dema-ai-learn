@@ -114,6 +114,7 @@ class QuizResult(BaseModel):
 
 class AnswerResponse(BaseModel):
     is_correct: bool
+    chosen_index: int
     correct_index: int
     explanation: str
     source_span: str

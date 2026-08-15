@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Run prototype tests
-        run: python -m unittest tests/test_prototypes.py -v
+        run: python -m unittest tests/test_miniprogram_ui.py tests/test_prototypes.py -v
 
   miniprogram:
     name: Miniprogram typecheck
@@ -50,6 +50,8 @@ jobs:
           node-version: 20
       - name: Install dependencies
         run: npm install
+      - name: Run miniprogram state tests
+        run: npm test
       - name: Typecheck
         run: npm run typecheck
 

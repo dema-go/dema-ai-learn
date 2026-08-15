@@ -1,1 +1,195 @@
-/* app.wxss */
+.quiz-screen {
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: calc(116px + env(safe-area-inset-bottom));
+}
+
+.question-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-pill {
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.question {
+  margin: 24px 0 16px;
+  font-size: 19px;
+  line-height: 1.55;
+  font-weight: 700;
+}
+
+.choice-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.choice-card {
+  width: 100%;
+  min-height: 56px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  text-align: left;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+}
+
+.choice-list .choice-card {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.choice-card::after {
+  border: 0;
+}
+
+.choice-card + .choice-card {
+  margin-top: 16px;
+}
+
+.choice-card[disabled] {
+  opacity: 1;
+}
+
+.choice-card.submitting {
+  border-color: var(--coral);
+  background: var(--coral-soft);
+}
+
+.choice-card.correct {
+  border-color: #379482;
+  background: var(--mint-soft);
+}
+
+.choice-card.wrong {
+  border-color: var(--danger);
+  background: #fff1ef;
+}
+
+.choice-key {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f0ece3;
+  font-weight: 800;
+}
+
+.choice-card.correct .choice-key {
+  color: #fff;
+  background: #379482;
+}
+
+.choice-card.wrong .choice-key {
+  color: #fff;
+  background: var(--danger);
+}
+
+.choice-copy {
+  flex: 1;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.correct-label {
+  padding-top: 5px;
+  color: #28776c;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+@keyframes choice-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.choice-card.submitting .choice-key {
+  animation: choice-pulse 700ms ease-in-out infinite;
+}
+
+.answer-feedback {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-left: 4px solid var(--mint);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.feedback-title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.feedback-copy {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.source-toggle {
+  margin-top: 8px;
+  padding: 10px 0;
+  color: var(--coral);
+  background: transparent;
+  font-weight: 700;
+}
+
+.source-toggle::after {
+  border: 0;
+}
+
+.source-drawer {
+  margin: 8px 0 16px;
+  padding: 12px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  font-size: 13px;
+}
+
+.bottom-action {
+  position: fixed;
+  z-index: 20;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: rgba(255, 254, 250, 0.98);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 24px rgba(36, 41, 45, 0.08);
+}
+
+.bottom-hint {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .choice-card.submitting .choice-key {
+    animation: none;
+  }
+}

@@ -1,35 +1,43 @@
-<view class="screen" wx:if="{{question}}">
+<view class="screen quiz-screen" wx:if="{{question}}">
   <view class="question-head">
     <text class="status-pill">第 {{index + 1}} / {{quiz.question_count}} 题</text>
-    <text class="tag">{{question.question_type === 'true_false' ? '判断题' : '单选题'}}</text>
-  </view>
-  <view class="progress" style="margin-top:12px"><view class="progress-bar" style="width: {{percent}}%;"></view></view>
-  <view class="question-head" style="margin-top:18px">
-    <text class="tag">{{question.question_type === 'true_false' ? '判断题' : '单选题'}}</text>
     <button class="text-btn" bindtap="onReport">这题有问题</button>
   </view>
+  <view class="progress" style="margin-top:12px"><view class="progress-bar" style="width: {{percent}}%;"></view></view>
+  <text class="tag">{{question.question_type === 'true_false' ? '判断题' : '单选题'}}</text>
   <view class="question">{{question.stem}}</view>
-  <button
-    wx:for="{{question.options}}"
-    wx:key="*this"
-    wx:for-index="optIndex"
-    class="choice-card {{selected === optIndex ? 'selected' : ''}} {{submitted && optIndex === question.answer_index ? 'correct' : ''}} {{submitted && selected === optIndex && !isCorrect ? 'wrong' : ''}}"
-    bindtap="onSelect"
-    data-index="{{optIndex}}"
-  >
-    <text class="choice-key">{{keys[optIndex]}}</text>
-    <text>{{item}}</text>
-  </button>
-
-  <view class="feedback {{isCorrect ? 'correct' : 'wrong'}}" wx:if="{{submitted}}">
-    <view class="card-title">{{isCorrect ? '✓ 稳了，答对了' : '× 差一点，正确答案是 ' + keys[question.answer_index]}}</view>
-    <view class="meta">{{explanation}}</view>
+  <view class="choice-list">
+    <button
+      wx:for="{{question.options}}"
+      wx:key="*this"
+      wx:for-index="optIndex"
+      class="choice-card {{answer.phase === 'submitting' && answer.selectedIndex === optIndex ? 'submitting' : ''}} {{answer.phase === 'answered' && answer.correctIndex === optIndex ? 'correct' : ''}} {{answer.phase === 'answered' && answer.selectedIndex === optIndex && answer.selectedIndex !== answer.correctIndex ? 'wrong' : ''}}"
+      bindtap="onSelect"
+      data-index="{{optIndex}}"
+      disabled="{{answer.phase !== 'idle'}}"
+    >
+      <text class="choice-key" aria-label="正确选项" wx:if="{{answer.phase === 'answered' && answer.correctIndex === optIndex}}">✓</text>
+      <text class="choice-key" aria-label="错误选项，你的选择" wx:elif="{{answer.phase === 'answered' && answer.selectedIndex === optIndex}}">×</text>
+      <text class="choice-key" wx:else>{{keys[optIndex]}}</text>
+      <text class="choice-copy">{{item}}</text>
+      <text class="correct-label" wx:if="{{answer.phase === 'answered' && answer.correctIndex === optIndex && !answer.isCorrect}}">正确答案</text>
+    </button>
   </view>
-  <button class="text-btn" wx:if="{{submitted}}" bindtap="toggleSource">🔎 查看原文依据</button>
-  <view class="source-drawer" wx:if="{{showSource}}">
+
+  <view class="answer-feedback" wx:if="{{answer.phase === 'answered'}}">
+    <view class="feedback-title">{{answer.isCorrect ? '✓ 回答正确' : '× 这次选错了'}}</view>
+    <view class="feedback-copy">{{explanation}}</view>
+  </view>
+  <button class="source-toggle" wx:if="{{answer.phase === 'answered'}}" bindtap="toggleSource">🔎 {{showSource ? '收起原文依据' : '查看原文依据'}}</button>
+  <view class="source-drawer" wx:if="{{answer.phase === 'answered' && showSource}}">
     <view class="card-title">原文依据</view>
     <view>{{sourceSpan}}</view>
   </view>
   <view class="ai-notice">✦ AI 依据你的材料生成，可能有误</view>
-  <button class="btn" bindtap="onConfirm">{{submitted ? (finished ? '查看结果' : '下一题') : '确定答案'}}</button>
+  <view class="bottom-action">
+    <view class="bottom-hint" wx:if="{{answer.phase !== 'answered'}}">
+      {{answer.phase === 'submitting' ? '正在提交答案…' : '点选答案后立即判题'}}
+    </view>
+    <button class="btn" wx:else bindtap="onNext">{{finished ? '查看结果' : '下一题'}}</button>
+  </view>
 </view>

@@ -13,6 +13,10 @@
     </view>
   </view>
   <view class="ai-notice">✦ {{quiz.ai_notice}}</view>
-  <button class="btn" bindtap="onStart">开始闯关</button>
-  <button class="btn ghost" bindtap="onBack">返回修改材料</button>
+  <view class="action-group action-group--primary button-stack">
+    <button class="btn" bindtap="onStart">开始闯关</button>
+  </view>
+  <view class="action-group action-group--secondary button-stack">
+    <button class="btn ghost" bindtap="onBack">返回修改材料</button>
+  </view>
 </view>

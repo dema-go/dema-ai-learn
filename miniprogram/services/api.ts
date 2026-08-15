@@ -158,6 +158,7 @@ export interface AnswerRequest {
 
 export interface AnswerResponse {
   is_correct: boolean;
+  chosen_index: number;
   correct_index: number;
   explanation: string;
   source_span: string;

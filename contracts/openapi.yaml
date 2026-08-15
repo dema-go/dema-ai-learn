@@ -411,10 +411,12 @@ components:
             type: string
     AnswerResponse:
       type: object
-      required: [is_correct, correct_index, explanation, source_span, attempt_id, finished]
+      required: [is_correct, chosen_index, correct_index, explanation, source_span, attempt_id, finished]
       properties:
         is_correct:
           type: boolean
+        chosen_index:
+          type: integer
         correct_index:
           type: integer
         explanation:

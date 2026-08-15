@@ -1,8 +1,14 @@
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
+
+os.environ["KAOWOYIXIA_ENV_FILE"] = ""
+os.environ["DATABASE_URL"] = "sqlite://"
+os.environ["DEEPSEEK_API_KEY"] = ""
 
 from app.adapters.quiz_model import FixtureQuizModel
 from app.db import get_db
@@ -51,8 +57,10 @@ def client(db_session: Session) -> TestClient:
     def _override_db():
         try:
             yield db_session
-        finally:
-            pass
+            db_session.commit()
+        except Exception:
+            db_session.rollback()
+            raise
 
     app.dependency_overrides[get_db] = _override_db
     with TestClient(app) as test_client:

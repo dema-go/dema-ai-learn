@@ -3,14 +3,14 @@
 
 PY := backend/.venv/bin/python
 
-.PHONY: setup test test-backend test-contract test-prototypes test-types verify dev proto clean help
+.PHONY: setup test test-backend test-contract test-prototypes test-miniprogram test-types verify dev proto clean help
 
 setup: ## 创建后端 venv + 安装后端/小程序依赖
 	python3 -m venv backend/.venv
 	$(PY) -m pip install -e "backend[dev]"
 	cd miniprogram && npm install
 
-test: test-backend test-prototypes test-types ## 运行全部测试套件
+test: test-backend test-prototypes test-miniprogram ## 运行全部测试套件
 
 test-backend: ## 后端测试（含契约漂移检测，强制 Fixture 模型）
 	cd backend && .venv/bin/python -m pytest tests/ -q
@@ -19,7 +19,10 @@ test-contract: ## 只跑契约漂移检测
 	cd backend && .venv/bin/python -m pytest tests/test_contract.py -q
 
 test-prototypes: ## HTML 原型验证
-	$(PY) -m unittest tests/test_prototypes.py -v
+	$(PY) -m unittest tests/test_miniprogram_ui.py tests/test_prototypes.py -v
+
+test-miniprogram: ## 小程序状态测试与 TypeScript 类型检查
+	cd miniprogram && npm test && npm run typecheck
 
 test-types: ## 小程序 TypeScript 类型检查
 	cd miniprogram && npm run typecheck
