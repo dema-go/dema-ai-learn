@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.deps import get_current_user
 from app.models.tables import User
-from app.schemas.api import EventRequest
+from app.schemas.api import EventRequest, OkResponse
 from app.services.events import track_event
 
 ALLOWED = {
@@ -21,7 +21,7 @@ ALLOWED = {
 router = APIRouter()
 
 
-@router.post("/api/events")
+@router.post("/api/events", response_model=OkResponse)
 def create_event(
     payload: EventRequest,
     db: Annotated[Session, Depends(get_db)],
