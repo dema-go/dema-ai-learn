@@ -1,4 +1,11 @@
 import { api, errorMessage, Question, QuizResponse } from "../../services/api";
+import {
+  AnswerViewState,
+  beginAnswerSubmission,
+  createAnswerState,
+  failAnswerSubmission,
+  resolveAnswerSubmission,
+} from "../../utils/answer-state";
 
 const KEYS = ["A", "B", "C", "D"];
 
@@ -7,9 +14,7 @@ Page({
     quiz: {} as QuizResponse,
     question: null as Question | null,
     index: 0,
-    selected: -1,
-    submitted: false,
-    isCorrect: false,
+    answer: createAnswerState() as AnswerViewState,
     explanation: "",
     sourceSpan: "",
     showSource: false,
@@ -34,45 +39,42 @@ Page({
     }
   },
 
-  onSelect(event: WechatMiniprogram.TouchEvent) {
-    if (this.data.submitted) return;
-    this.setData({ selected: Number(event.currentTarget.dataset.index) });
+  async onSelect(event: WechatMiniprogram.TouchEvent) {
+    const selectedIndex = Number(event.currentTarget.dataset.index);
+    const submitting = beginAnswerSubmission(this.data.answer, selectedIndex);
+    if (submitting === this.data.answer) return;
+
+    this.setData({ answer: submitting });
+    try {
+      const question = this.data.question as Question;
+      const res = await api.answer(this.data.quiz.id, {
+        question_id: question.question_id,
+        chosen_index: selectedIndex,
+        attempt_id: this.data.attemptId || undefined,
+      });
+      this.setData({
+        answer: resolveAnswerSubmission(submitting, res.is_correct, res.correct_index),
+        explanation: res.explanation,
+        sourceSpan: res.source_span,
+        showSource: false,
+        finished: res.finished,
+        attemptId: res.attempt_id,
+      });
+      if (res.result) {
+        wx.setStorageSync("last_result", {
+          quizId: this.data.quiz.id,
+          title: this.data.quiz.title,
+          ...res.result,
+        });
+      }
+    } catch (err) {
+      this.setData({ answer: failAnswerSubmission(submitting) });
+      wx.showToast({ title: errorMessage(err, "提交失败，请重新选择"), icon: "none" });
+    }
   },
 
-  async onConfirm() {
-    if (!this.data.submitted) {
-      if (this.data.selected < 0) {
-        wx.showToast({ title: "先选一个答案", icon: "none" });
-        return;
-      }
-      try {
-        const question = this.data.question as Question;
-        const res = await api.answer(this.data.quiz.id, {
-          question_id: question.question_id,
-          chosen_index: this.data.selected,
-          attempt_id: this.data.attemptId || undefined,
-        });
-        this.setData({
-          submitted: true,
-          isCorrect: res.is_correct,
-          explanation: res.explanation,
-          sourceSpan: res.source_span,
-          showSource: !res.is_correct,
-          finished: res.finished,
-          attemptId: res.attempt_id,
-        });
-        if (res.result) {
-          wx.setStorageSync("last_result", {
-            quizId: this.data.quiz.id,
-            title: this.data.quiz.title,
-            ...res.result,
-          });
-        }
-      } catch (err) {
-        wx.showToast({ title: errorMessage(err, "提交失败"), icon: "none" });
-      }
-      return;
-    }
+  onNext() {
+    if (this.data.answer.phase !== "answered") return;
     if (this.data.finished) {
       wx.redirectTo({ url: `/pages/result/result?quizId=${this.data.quiz.id}` });
       return;
@@ -82,9 +84,7 @@ Page({
     this.setData({
       index: nextIndex,
       question: next,
-      selected: -1,
-      submitted: false,
-      isCorrect: false,
+      answer: createAnswerState(),
       explanation: "",
       sourceSpan: "",
       showSource: false,
