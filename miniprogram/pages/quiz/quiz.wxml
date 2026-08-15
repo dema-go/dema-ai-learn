@@ -1,4 +1,4 @@
-<view class="screen" wx:if="{{question}}">
+<view class="screen quiz-screen" wx:if="{{question}}">
   <view class="question-head">
     <text class="status-pill">第 {{index + 1}} / {{quiz.question_count}} 题</text>
     <button class="text-btn" bindtap="onReport">这题有问题</button>
