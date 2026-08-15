@@ -9,7 +9,7 @@ page {
 }
 
 .screen {
-  padding: 18px 17px 96px;
+  padding: 18px 16px 96px;
   box-sizing: border-box;
 }
 
@@ -50,7 +50,7 @@ page {
 }
 
 .card + .card {
-  margin-top: 22rpx;
+  margin-top: 16px;
 }
 
 .card-title {
@@ -88,7 +88,7 @@ page {
 
 .btn {
   width: 100%;
-  min-height: 96rpx;
+  min-height: 48px;
   border: 0;
   border-radius: 26rpx;
   padding: 22rpx 32rpx;
@@ -127,14 +127,23 @@ page {
   opacity: 0.55;
 }
 
+.btn + .btn {
+  margin-top: 12px;
+}
+
 .btn-row {
   display: flex;
-  gap: 18rpx;
-  margin-top: 24rpx;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .btn-row .btn {
   flex: 1;
+  margin-top: 0;
+}
+
+.btn-row .btn + .btn {
+  margin-top: 0;
 }
 
 .text-btn {
@@ -216,7 +225,7 @@ page {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 32rpx;
-  margin-bottom: 18rpx;
+  margin-bottom: 12px;
 }
 
 .input-card::after {
