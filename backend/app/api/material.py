@@ -6,12 +6,13 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.deps import get_current_user
 from app.models.tables import User
+from app.schemas.api import OkResponse
 from app.services.records import delete_material
 
 router = APIRouter()
 
 
-@router.delete("/api/material/{material_id}")
+@router.delete("/api/material/{material_id}", response_model=OkResponse)
 def remove_material(
     material_id: str,
     db: Annotated[Session, Depends(get_db)],

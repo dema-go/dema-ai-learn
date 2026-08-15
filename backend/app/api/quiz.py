@@ -6,7 +6,15 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.deps import get_current_user
 from app.models.tables import Question, Quiz, User
-from app.schemas.api import AnswerRequest, GenerateRequest, GenerateResponse, TaskResponse
+from app.schemas.api import (
+    AnswerRequest,
+    AnswerResponse,
+    GenerateRequest,
+    GenerateResponse,
+    QuizResponse,
+    RecentListResponse,
+    TaskResponse,
+)
 from app.services.attempts import create_retest, submit_answer
 from app.services.generate import submit_generate
 from app.services.quiz_job import get_quiz_for_user, run_quiz_job
@@ -48,7 +56,7 @@ def get_task(
     }
 
 
-@router.get("/api/quiz/recent")
+@router.get("/api/quiz/recent", response_model=RecentListResponse)
 def recent_quizzes(
     db: Annotated[Session, Depends(get_db)],
     user: Annotated[User, Depends(get_current_user)],
@@ -57,7 +65,7 @@ def recent_quizzes(
     return {"items": list_recent(db, user.id, filter)}
 
 
-@router.get("/api/quiz/{quiz_id}")
+@router.get("/api/quiz/{quiz_id}", response_model=QuizResponse)
 def get_quiz(
     quiz_id: str,
     db: Annotated[Session, Depends(get_db)],
@@ -67,7 +75,7 @@ def get_quiz(
     return serialize_quiz(quiz)
 
 
-@router.post("/api/quiz/{quiz_id}/answer")
+@router.post("/api/quiz/{quiz_id}/answer", response_model=AnswerResponse)
 def answer_question(
     quiz_id: str,
     payload: AnswerRequest,

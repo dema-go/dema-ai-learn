@@ -214,7 +214,15 @@ Agent 只能修改自己任务范围内的 worktree。涉及共享 API 时，先
 
 ### 7.1 本地联调（代码已合入 main 后）
 
-后端：
+推荐用根目录 `Makefile` 一键完成（`make help` 查看全部目标）：
+
+```bash
+make setup   # 创建 backend/.venv + pip install + npm install
+make dev     # uvicorn 127.0.0.1:8000
+make proto   # HTML 原型 127.0.0.1:4173
+```
+
+手工方式：
 
 ```bash
 cd backend
@@ -303,14 +311,17 @@ git diff --check
 git status -sb
 ```
 
-当前测试命令：
+当前测试命令（推荐 `make test` 一键执行；`make verify` 额外做 `git diff --check`）：
 
 ```bash
 python3 -m unittest tests/test_prototypes.py -v
 cd backend && pytest tests/ -q
+cd miniprogram && npx tsc --noEmit
 ```
 
 后端测试必须使用 Fixture 模型，不得读取本机 `.env` 去打 DeepSeek。小程序以微信开发者工具模拟器验收，不单靠静态搜索。
+
+`backend/tests/test_contract.py` 会把 `contracts/openapi.yaml` 与 FastAPI 运行时 schema 逐接口比对；改接口（路径、参数、请求体、响应结构）必须同步更新契约，否则该测试失败。CI（`.github/workflows/ci.yml`）会在 push main 和每个 PR 上自动跑全套检查。
 
 浏览器 UI 改动至少验证：
 

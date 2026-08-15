@@ -22,3 +22,7 @@ __pycache__/
 .env
 .env.local
 .env.*.local
+
+# SQLite local databases (backend/.gitignore covers backend/local.db)
+local.db
+*.sqlite3

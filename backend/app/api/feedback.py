@@ -6,13 +6,13 @@ from sqlalchemy.orm import Session
 from app.db import get_db
 from app.deps import get_current_user
 from app.models.tables import User
-from app.schemas.api import FeedbackRequest
+from app.schemas.api import FeedbackRequest, OkResponse
 from app.services.records import submit_feedback
 
 router = APIRouter()
 
 
-@router.post("/api/question/{question_id}/feedback")
+@router.post("/api/question/{question_id}/feedback", response_model=OkResponse)
 def create_feedback(
     question_id: str,
     payload: FeedbackRequest,
