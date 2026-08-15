@@ -2,7 +2,11 @@
   "name": "kaowoyixia-miniprogram",
   "private": true,
   "description": "考我一下微信小程序",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
-    "miniprogram-api-typings": "^4.0.0"
+    "miniprogram-api-typings": "^4.0.0",
+    "typescript": "^5.6.0"
   }
 }
