@@ -8,6 +8,10 @@
   <view class="card">
     <view class="card-title">{{title}}</view>
   </view>
-  <button class="btn danger" bindtap="onConfirm">确认永久删除</button>
-  <button class="btn ghost" bindtap="onCancel">取消，保留材料</button>
+  <view class="action-group action-group--primary button-stack">
+    <button class="btn danger" bindtap="onConfirm">确认永久删除</button>
+  </view>
+  <view class="action-group action-group--secondary button-stack">
+    <button class="btn ghost" bindtap="onCancel">取消，保留材料</button>
+  </view>
 </view>

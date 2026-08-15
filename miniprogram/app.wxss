@@ -131,6 +131,20 @@ page {
   margin-top: 12px;
 }
 
+.action-group + .action-group {
+  margin-top: 20px;
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.button-stack .btn {
+  margin-top: 0;
+}
+
 .btn-row {
   display: flex;
   gap: 12px;

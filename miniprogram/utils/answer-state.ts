@@ -28,8 +28,15 @@ export function resolveAnswerSubmission(
   state: AnswerViewState,
   isCorrect: boolean,
   correctIndex: number,
+  chosenIndex: number,
 ): AnswerViewState {
-  return { ...state, phase: "answered", isCorrect, correctIndex };
+  return {
+    ...state,
+    phase: "answered",
+    selectedIndex: chosenIndex,
+    isCorrect,
+    correctIndex,
+  };
 }
 
 export function failAnswerSubmission(_state: AnswerViewState): AnswerViewState {

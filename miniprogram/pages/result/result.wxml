@@ -7,14 +7,20 @@
   </view>
   <view class="ai-notice">✦ 结果来自 AI 生成题目，仅供自测参考</view>
   <block wx:if="{{result.wrong_question_ids.length}}">
-    <button class="btn" bindtap="onRetest">马上翻盘</button>
-    <view class="btn-row">
+    <view class="action-group action-group--primary button-stack">
+      <button class="btn" bindtap="onRetest">马上翻盘</button>
+    </view>
+    <view class="action-group action-group--secondary btn-row">
       <button class="btn ghost" bindtap="onAgain">再考一篇</button>
       <button class="btn ghost" bindtap="onShare">分享结果</button>
     </view>
   </block>
   <block wx:else>
-    <button class="btn" bindtap="onAgain">再考一篇</button>
-    <button class="btn ghost" bindtap="onShare">分享结果</button>
+    <view class="action-group action-group--primary button-stack">
+      <button class="btn" bindtap="onAgain">再考一篇</button>
+    </view>
+    <view class="action-group action-group--secondary button-stack">
+      <button class="btn ghost" bindtap="onShare">分享结果</button>
+    </view>
   </block>
 </view>

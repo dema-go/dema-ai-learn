@@ -16,8 +16,8 @@
       data-index="{{optIndex}}"
       disabled="{{answer.phase !== 'idle'}}"
     >
-      <text class="choice-key" wx:if="{{answer.phase === 'answered' && answer.correctIndex === optIndex}}">✓</text>
-      <text class="choice-key" wx:elif="{{answer.phase === 'answered' && answer.selectedIndex === optIndex}}">×</text>
+      <text class="choice-key" aria-label="正确选项" wx:if="{{answer.phase === 'answered' && answer.correctIndex === optIndex}}">✓</text>
+      <text class="choice-key" aria-label="错误选项，你的选择" wx:elif="{{answer.phase === 'answered' && answer.selectedIndex === optIndex}}">×</text>
       <text class="choice-key" wx:else>{{keys[optIndex]}}</text>
       <text class="choice-copy">{{item}}</text>
       <text class="correct-label" wx:if="{{answer.phase === 'answered' && answer.correctIndex === optIndex && !answer.isCorrect}}">正确答案</text>
@@ -29,7 +29,7 @@
     <view class="feedback-copy">{{explanation}}</view>
   </view>
   <button class="source-toggle" wx:if="{{answer.phase === 'answered'}}" bindtap="toggleSource">🔎 {{showSource ? '收起原文依据' : '查看原文依据'}}</button>
-  <view class="source-drawer" wx:if="{{showSource}}">
+  <view class="source-drawer" wx:if="{{answer.phase === 'answered' && showSource}}">
     <view class="card-title">原文依据</view>
     <view>{{sourceSpan}}</view>
   </view>

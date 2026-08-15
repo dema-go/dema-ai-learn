@@ -53,7 +53,12 @@ Page({
         attempt_id: this.data.attemptId || undefined,
       });
       this.setData({
-        answer: resolveAnswerSubmission(submitting, res.is_correct, res.correct_index),
+        answer: resolveAnswerSubmission(
+          submitting,
+          res.is_correct,
+          res.correct_index,
+          res.chosen_index,
+        ),
         explanation: res.explanation,
         sourceSpan: res.source_span,
         showSource: false,

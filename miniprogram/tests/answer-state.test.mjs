@@ -28,7 +28,7 @@ test("ignores another choice while submitting", () => {
 
 test("stores server truth for a correct answer", () => {
   const submitting = beginAnswerSubmission(createAnswerState(), 1);
-  assert.deepEqual(resolveAnswerSubmission(submitting, true, 1), {
+  assert.deepEqual(resolveAnswerSubmission(submitting, true, 1, 1), {
     phase: "answered",
     selectedIndex: 1,
     correctIndex: 1,
@@ -38,7 +38,7 @@ test("stores server truth for a correct answer", () => {
 
 test("stores both wrong selection and server correct answer", () => {
   const submitting = beginAnswerSubmission(createAnswerState(), 0);
-  assert.deepEqual(resolveAnswerSubmission(submitting, false, 1), {
+  assert.deepEqual(resolveAnswerSubmission(submitting, false, 1, 0), {
     phase: "answered",
     selectedIndex: 0,
     correctIndex: 1,
@@ -49,4 +49,17 @@ test("stores both wrong selection and server correct answer", () => {
 test("a failed submission returns to a retryable state", () => {
   const submitting = beginAnswerSubmission(createAnswerState(), 2);
   assert.deepEqual(failAnswerSubmission(submitting), createAnswerState());
+});
+
+test("a retry resolves to the choice persisted before the lost response", () => {
+  const firstSubmission = beginAnswerSubmission(createAnswerState(), 0);
+  const retryable = failAnswerSubmission(firstSubmission);
+  const retrySubmission = beginAnswerSubmission(retryable, 1);
+
+  assert.deepEqual(resolveAnswerSubmission(retrySubmission, true, 0, 0), {
+    phase: "answered",
+    selectedIndex: 0,
+    correctIndex: 0,
+    isCorrect: true,
+  });
 });
