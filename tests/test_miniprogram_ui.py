@@ -81,10 +81,22 @@ class MiniProgramQuizUiContractTests(unittest.TestCase):
         choice_list = css_declarations(self.quiz_wxss, ".choice-list")
         self.assertEqual(choice_list["display"], "flex")
         self.assertEqual(choice_list["flex-direction"], "column")
-        self.assertEqual(choice_list["gap"], "12px")
+        self.assertEqual(choice_list.get("width"), "100%")
+        self.assertNotIn("gap", choice_list)
         choice_card = css_declarations(self.quiz_wxss, ".choice-card")
-        self.assertEqual(choice_card["width"], "100%")
+        self.assertEqual(choice_card.get("width"), "100%")
         self.assertEqual(choice_card["min-height"], "56px")
+        choice_card_override = css_declarations(
+            self.quiz_wxss,
+            ".choice-list .choice-card",
+        )
+        self.assertEqual(choice_card_override.get("width"), "100%")
+        self.assertEqual(choice_card_override.get("margin-left"), "0")
+        self.assertEqual(choice_card_override.get("margin-right"), "0")
+        self.assertEqual(
+            css_declarations(self.quiz_wxss, ".choice-card + .choice-card")["margin-top"],
+            "16px",
+        )
         bottom_action = css_declarations(self.quiz_wxss, ".bottom-action")
         self.assertEqual(bottom_action["position"], "fixed")
         self.assertEqual(
@@ -112,6 +124,10 @@ class MiniProgramQuizUiContractTests(unittest.TestCase):
             "16px",
         )
         self.assertEqual(css_declarations(self.app_wxss, ".btn")["min-height"], "48px")
+        full_width_button = css_declarations(self.app_wxss, ".screen .btn")
+        self.assertEqual(full_width_button.get("width"), "100%")
+        self.assertEqual(full_width_button.get("margin-left"), "0")
+        self.assertEqual(full_width_button.get("margin-right"), "0")
         self.assertEqual(
             css_declarations(self.app_wxss, ".btn + .btn")["margin-top"],
             "12px",

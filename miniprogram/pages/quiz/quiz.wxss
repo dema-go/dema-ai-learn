@@ -27,9 +27,9 @@
 }
 
 .choice-list {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .choice-card {
@@ -48,8 +48,18 @@
   border-radius: 14px;
 }
 
+.choice-list .choice-card {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .choice-card::after {
   border: 0;
+}
+
+.choice-card + .choice-card {
+  margin-top: 16px;
 }
 
 .choice-card[disabled] {
