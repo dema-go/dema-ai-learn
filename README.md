@@ -30,7 +30,24 @@ docs/             设计规范、实施计划、原型总览图
 
 ## 本地启动
 
+### 0. 一键安装（推荐）
+
+```bash
+make setup    # 创建后端 venv + 安装后端与小程序依赖
+```
+
+之后常用命令：
+
+```bash
+make test     # 全部测试（后端 + 契约漂移 + 原型 + TS 类型检查）
+make dev      # 启动后端 127.0.0.1:8000
+make proto    # 启动 HTML 原型 127.0.0.1:4173
+make help     # 列出全部目标
+```
+
 ### 1. 后端
+
+（手工方式；等价于 `make setup && make dev`）
 
 ```bash
 cd backend
@@ -49,6 +66,8 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 健康检查：<http://127.0.0.1:8000/health>
 
 **不要把 `.env` 提交到 Git。** 根目录与 `backend/.gitignore` 都已忽略它。
+
+本地数据库默认落在 `backend/local.db`（路径锚定 backend/ 目录，与启动时的工作目录无关）；`DATABASE_URL` 环境变量可覆盖。
 
 DeepSeek V4 Flash 默认开思考模式，结构化出题必须关闭思考：
 
@@ -79,11 +98,21 @@ python3 -m http.server 4173
 ## 测试
 
 ```bash
-python3 -m unittest tests/test_prototypes.py -v
-cd backend && pytest tests/ -q
+make test        # 一键全部：后端 + 契约漂移 + 原型 + TS 类型检查
+make verify      # make test + git diff --check（提交前必跑）
 ```
 
-后端单元测试强制使用 Fixture 模型，不会消耗 DeepSeek 额度。
+等价的手工命令：
+
+```bash
+cd backend && pytest tests/ -q              # 后端单元测试 + 契约漂移检测
+python3 -m unittest tests/test_prototypes.py -v
+cd miniprogram && npx tsc --noEmit
+```
+
+后端单元测试强制使用 Fixture 模型，不会消耗 DeepSeek 额度。`backend/tests/test_contract.py` 会把 `contracts/openapi.yaml` 与 FastAPI 运行时 schema 逐接口比对，改接口时必须同步更新契约。
+
+每次 push 到 `main` 和每个 PR 都会在 GitHub Actions 上自动跑同一套检查（`.github/workflows/ci.yml`）。
 
 ## 产品原则（摘要）
 
