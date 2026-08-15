@@ -50,6 +50,7 @@ def test_answer_correct_and_wrong(client):
     )
     assert res.status_code == 200
     assert res.json()["is_correct"] is True
+    assert res.json()["chosen_index"] == first["answer_index"]
     assert res.json()["explanation"]
     assert res.json()["source_span"]
     second = quiz["questions"][1]
@@ -86,6 +87,8 @@ def test_duplicate_answer_returns_stored_result_without_scoring_twice(client, db
     replay_body = replay.json()
     assert replay_body["attempt_id"] == first_body["attempt_id"]
     assert replay_body["is_correct"] is True
+    assert first_body["chosen_index"] == first["answer_index"]
+    assert replay_body["chosen_index"] == first["answer_index"]
     assert replay_body["correct_index"] == first["answer_index"]
     attempt = db_session.query(Attempt).filter(Attempt.id == first_body["attempt_id"]).one()
     user = db_session.query(User).filter(User.id == attempt.user_id).one()

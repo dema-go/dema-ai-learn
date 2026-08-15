@@ -1,6 +1,7 @@
+import time
 from datetime import datetime, timezone
 
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
 
 from app.errors import DomainError
@@ -47,6 +48,60 @@ def get_latest_attempt(db: Session, quiz: Quiz, user_id: str) -> Attempt | None:
     )
 
 
+def _is_sqlite_busy(error: OperationalError) -> bool:
+    return "database is locked" in str(error).lower()
+
+
+def _acquire_attempt(db: Session, quiz: Quiz, user: User, ordinal: int) -> Attempt:
+    quiz_id = quiz.id
+    user_id = user.id
+    existing = (
+        db.query(Attempt)
+        .filter(Attempt.quiz_id == quiz_id, Attempt.user_id == user_id)
+        .one_or_none()
+    )
+    if existing is not None:
+        return existing
+
+    for retry in range(5):
+        candidate = Attempt(
+            quiz_id=quiz_id,
+            user_id=user_id,
+            current_ordinal=ordinal,
+        )
+        try:
+            with db.begin_nested():
+                db.add(candidate)
+                db.flush()
+            return candidate
+        except IntegrityError:
+            db.rollback()
+            existing = (
+                db.query(Attempt)
+                .filter(Attempt.quiz_id == quiz_id, Attempt.user_id == user_id)
+                .one_or_none()
+            )
+            if existing is not None:
+                return existing
+            raise
+        except OperationalError as error:
+            db.rollback()
+            if not _is_sqlite_busy(error):
+                raise
+            existing = (
+                db.query(Attempt)
+                .filter(Attempt.quiz_id == quiz_id, Attempt.user_id == user_id)
+                .one_or_none()
+            )
+            if existing is not None:
+                return existing
+            db.rollback()
+            if retry == 4:
+                raise
+            time.sleep(0.01 * (retry + 1))
+    raise RuntimeError("attempt acquisition exhausted")
+
+
 def _answer_response(
     db: Session,
     quiz: Quiz,
@@ -77,6 +132,7 @@ def _answer_response(
             next_question_id = remaining[0].id
     return {
         "is_correct": answer.is_correct,
+        "chosen_index": answer.chosen_index,
         "correct_index": question.answer_index,
         "explanation": question.explanation,
         "source_span": question.source_span,
@@ -85,6 +141,28 @@ def _answer_response(
         "finished": finished,
         "result": result,
     }
+
+
+def _replayed_answer_response(
+    db: Session,
+    *,
+    quiz_id: str,
+    question_id: str,
+    attempt_id: str,
+) -> dict | None:
+    answer = (
+        db.query(Answer)
+        .filter(Answer.attempt_id == attempt_id, Answer.question_id == question_id)
+        .one_or_none()
+    )
+    if answer is None:
+        return None
+    attempt = db.query(Attempt).filter(Attempt.id == attempt_id).one_or_none()
+    quiz = db.query(Quiz).filter(Quiz.id == quiz_id).one_or_none()
+    question = db.query(Question).filter(Question.id == question_id).one_or_none()
+    if attempt is None or quiz is None or question is None:
+        return None
+    return _answer_response(db, quiz, question, attempt, answer)
 
 
 def submit_answer(
@@ -113,21 +191,7 @@ def submit_answer(
         if attempt is None:
             raise DomainError("ATTEMPT_NOT_FOUND", "找不到这次作答。", status_code=404)
     else:
-        attempt = get_open_attempt(db, quiz, user.id)
-        if attempt is None:
-            latest = get_latest_attempt(db, quiz, user.id)
-            if latest is not None:
-                replayed = (
-                    db.query(Answer)
-                    .filter(Answer.attempt_id == latest.id, Answer.question_id == question.id)
-                    .one_or_none()
-                )
-                if replayed is not None:
-                    return _answer_response(db, quiz, question, latest, replayed)
-        if attempt is None:
-            attempt = Attempt(quiz_id=quiz.id, user_id=user.id, current_ordinal=question.ordinal)
-            db.add(attempt)
-            db.flush()
+        attempt = _acquire_attempt(db, quiz, user, question.ordinal)
 
     answered_before = db.query(Answer).filter(Answer.attempt_id == attempt.id).count()
     is_correct = chosen_index == question.answer_index
@@ -137,19 +201,24 @@ def submit_answer(
         chosen_index=chosen_index,
         is_correct=is_correct,
     )
+    persisted_attempt_id = attempt.id
+    persisted_quiz_id = quiz.id
+    persisted_question_id = question.id
     try:
         with db.begin_nested():
             db.add(answer)
             db.flush()
     except IntegrityError:
-        replayed = (
-            db.query(Answer)
-            .filter(Answer.attempt_id == attempt.id, Answer.question_id == question.id)
-            .one_or_none()
+        db.rollback()
+        replayed = _replayed_answer_response(
+            db,
+            quiz_id=persisted_quiz_id,
+            question_id=persisted_question_id,
+            attempt_id=persisted_attempt_id,
         )
         if replayed is None:
             raise
-        return _answer_response(db, quiz, question, attempt, replayed)
+        return replayed
 
     if answered_before == 0:
         track_event(db, user.id, "quiz_started", {"quiz_id": quiz.id})

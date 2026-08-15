@@ -57,8 +57,10 @@ def client(db_session: Session) -> TestClient:
     def _override_db():
         try:
             yield db_session
-        finally:
-            pass
+            db_session.commit()
+        except Exception:
+            db_session.rollback()
+            raise
 
     app.dependency_overrides[get_db] = _override_db
     with TestClient(app) as test_client:

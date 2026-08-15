@@ -112,6 +112,9 @@ class Question(Base):
 
 class Attempt(Base):
     __tablename__ = "attempt"
+    __table_args__ = (
+        Index("uq_attempt_user_quiz", "user_id", "quiz_id", unique=True),
+    )
 
     id: Mapped[str] = mapped_column(String(32), primary_key=True, default=new_id)
     quiz_id: Mapped[str] = mapped_column(ForeignKey("quiz.id"), index=True)
