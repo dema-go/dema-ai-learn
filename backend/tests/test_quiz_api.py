@@ -58,15 +58,54 @@ def test_answer_correct_and_wrong(client):
     assert res.json()["correct_index"] == second["answer_index"]
 
 
-def test_duplicate_answer_rejected(client):
+def test_duplicate_answer_returns_stored_result_without_scoring_twice(client):
     quiz = ready_quiz(client)
     first = quiz["questions"][0]
-    payload = {"question_id": first["question_id"], "chosen_index": 0}
+    payload = {
+        "question_id": first["question_id"],
+        "chosen_index": first["answer_index"],
+    }
+
     first_res = client.post(f"/api/quiz/{quiz['id']}/answer", json=payload)
     assert first_res.status_code == 200
-    second_res = client.post(f"/api/quiz/{quiz['id']}/answer", json=payload)
-    assert second_res.status_code == 409
-    assert second_res.json()["error"]["code"] == "ALREADY_ANSWERED"
+    first_body = first_res.json()
+
+    replay = client.post(
+        f"/api/quiz/{quiz['id']}/answer",
+        json={
+            **payload,
+            "chosen_index": (first["answer_index"] + 1) % len(first["options"]),
+        },
+    )
+    assert replay.status_code == 200
+    replay_body = replay.json()
+    assert replay_body["attempt_id"] == first_body["attempt_id"]
+    assert replay_body["is_correct"] is True
+    assert replay_body["correct_index"] == first["answer_index"]
+
+    last = None
+    for question in quiz["questions"][1:]:
+        last = client.post(
+            f"/api/quiz/{quiz['id']}/answer",
+            json={
+                "attempt_id": first_body["attempt_id"],
+                "question_id": question["question_id"],
+                "chosen_index": question["answer_index"],
+            },
+        )
+    assert last is not None
+    assert last.json()["result"]["correct"] == len(quiz["questions"])
+
+    last_question = quiz["questions"][-1]
+    completed_replay = client.post(
+        f"/api/quiz/{quiz['id']}/answer",
+        json={
+            "question_id": last_question["question_id"],
+            "chosen_index": last_question["answer_index"],
+        },
+    )
+    assert completed_replay.status_code == 200
+    assert completed_replay.json()["result"]["correct"] == len(quiz["questions"])
 
 
 def test_finish_quiz_returns_result(client):
@@ -86,4 +125,3 @@ def test_finish_quiz_returns_result(client):
     assert body["result"]["correct"] == len(quiz["questions"])
     assert body["result"]["total"] == len(quiz["questions"])
     assert body["result"]["wrong_question_ids"] == []
-

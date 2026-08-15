@@ -46,6 +46,46 @@ def get_latest_attempt(db: Session, quiz: Quiz, user_id: str) -> Attempt | None:
     )
 
 
+def _answer_response(
+    db: Session,
+    quiz: Quiz,
+    question: Question,
+    attempt: Attempt,
+    answer: Answer,
+) -> dict:
+    answers = db.query(Answer).filter(Answer.attempt_id == attempt.id).all()
+    finished = len(answers) >= quiz.question_count
+    result = None
+    next_question_id = None
+    if finished:
+        wrong_ids = [item.question_id for item in answers if not item.is_correct]
+        result = {
+            "correct": attempt.score,
+            "total": quiz.question_count,
+            "duration_seconds": _duration_seconds(attempt.started_at, attempt.completed_at),
+            "wrong_question_ids": wrong_ids,
+        }
+    else:
+        answered_ids = {item.question_id for item in answers}
+        remaining = [
+            item
+            for item in sorted(quiz.questions, key=lambda row: row.ordinal)
+            if item.id not in answered_ids
+        ]
+        if remaining:
+            next_question_id = remaining[0].id
+    return {
+        "is_correct": answer.is_correct,
+        "correct_index": question.answer_index,
+        "explanation": question.explanation,
+        "source_span": question.source_span,
+        "attempt_id": attempt.id,
+        "next_question_id": next_question_id,
+        "finished": finished,
+        "result": result,
+    }
+
+
 def submit_answer(
     db: Session,
     quiz: Quiz,
@@ -74,6 +114,16 @@ def submit_answer(
     else:
         attempt = get_open_attempt(db, quiz, user.id)
         if attempt is None:
+            latest = get_latest_attempt(db, quiz, user.id)
+            if latest is not None:
+                replayed = (
+                    db.query(Answer)
+                    .filter(Answer.attempt_id == latest.id, Answer.question_id == question.id)
+                    .one_or_none()
+                )
+                if replayed is not None:
+                    return _answer_response(db, quiz, question, latest, replayed)
+        if attempt is None:
             attempt = Attempt(quiz_id=quiz.id, user_id=user.id, current_ordinal=question.ordinal)
             db.add(attempt)
             db.flush()
@@ -84,32 +134,27 @@ def submit_answer(
         .one_or_none()
     )
     if existing is not None:
-        raise DomainError("ALREADY_ANSWERED", "这道题已经答过了。", status_code=409)
+        return _answer_response(db, quiz, question, attempt, existing)
 
     answered_before = db.query(Answer).filter(Answer.attempt_id == attempt.id).count()
     if answered_before == 0:
         track_event(db, user.id, "quiz_started", {"quiz_id": quiz.id})
 
     is_correct = chosen_index == question.answer_index
-    db.add(
-        Answer(
-            attempt_id=attempt.id,
-            question_id=question.id,
-            chosen_index=chosen_index,
-            is_correct=is_correct,
-        )
+    answer = Answer(
+        attempt_id=attempt.id,
+        question_id=question.id,
+        chosen_index=chosen_index,
+        is_correct=is_correct,
     )
+    db.add(answer)
     if is_correct:
         attempt.score += 1
         user.stars += 1
     attempt.current_ordinal = min(question.ordinal + 1, quiz.question_count)
     db.flush()
-
-    answers = db.query(Answer).filter(Answer.attempt_id == attempt.id).all()
-    finished = len(answers) >= quiz.question_count
-    result = None
-    next_question_id = None
-    if finished:
+    answered_count = db.query(Answer).filter(Answer.attempt_id == attempt.id).count()
+    if answered_count >= quiz.question_count:
         attempt.completed_at = utcnow()
         if not quiz.is_retest:
             user.streak_days = max(user.streak_days, 1)
@@ -119,34 +164,8 @@ def submit_answer(
             "quiz_completed",
             {"quiz_id": quiz.id, "score": attempt.score},
         )
-        wrong_ids = [item.question_id for item in answers if not item.is_correct]
-        duration = _duration_seconds(attempt.started_at, attempt.completed_at)
-        result = {
-            "correct": attempt.score,
-            "total": quiz.question_count,
-            "duration_seconds": max(duration, 0),
-            "wrong_question_ids": wrong_ids,
-        }
-    else:
-        answered_ids = {item.question_id for item in answers}
-        remaining = [
-            item
-            for item in sorted(quiz.questions, key=lambda row: row.ordinal)
-            if item.id not in answered_ids
-        ]
-        if remaining:
-            next_question_id = remaining[0].id
     db.flush()
-    return {
-        "is_correct": is_correct,
-        "correct_index": question.answer_index,
-        "explanation": question.explanation,
-        "source_span": question.source_span,
-        "attempt_id": attempt.id,
-        "next_question_id": next_question_id,
-        "finished": finished,
-        "result": result,
-    }
+    return _answer_response(db, quiz, question, attempt, answer)
 
 
 def create_retest(db: Session, quiz: Quiz, user: User) -> Quiz:
