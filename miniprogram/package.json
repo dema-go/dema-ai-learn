@@ -1,5 +1,6 @@
 {
   "name": "kaowoyixia-miniprogram",
+  "type": "module",
   "private": true,
   "description": "考我一下微信小程序",
   "scripts": {
